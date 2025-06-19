@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Damages & Shortages Claim Form</title>
+    <title>GIC Damages & Shortages Claim Form</title>
     <!-- Link to Google Fonts for 'Inter' -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -780,9 +780,12 @@
         </nav>
 
         <!-- IMPORTANT: Wrap all your form sections inside a <form> tag -->
-        <form name="claim_form" method="POST" data-netlify="true" id="mainClaimForm">
+        <!-- Add data-netlify-honeypot for bot detection -->
+        <form name="claim_form" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" id="mainClaimForm">
             <!-- Netlify requires a hidden input for every form if using JavaScript to handle sections -->
             <input type="hidden" name="form-name" value="claim_form" />
+            <!-- Honeypot field (hidden from users, but bots might fill it) -->
+            <input type="hidden" name="bot-field" />
 
             <!-- Initial content area, initially visible -->
             <main id="initialContentSection" class="content form-section" style="display: block;">
