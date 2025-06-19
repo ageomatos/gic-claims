@@ -1367,6 +1367,8 @@
                 errorSpanElement.textContent = ''; // Clear previous errors
                 const files = event.target.files;
 
+                console.log(`Attempting to add ${files.length} files to ${currentClaimType} attachments.`); // Debug log
+                
                 if (files.length > 0) {
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
@@ -1377,17 +1379,22 @@
                             // Check if file with same name already exists to prevent duplicates
                             if (!targetFilesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
                                 targetFilesArray.push(file); // Add to our array of attached files
+                                console.log(`Added file: ${file.name} to ${currentClaimType} attachments.`); // Debug log
                             } else {
                                 showCustomModal(`File "${file.name}" has already been added to this section.`, customModal);
+                                console.log(`Duplicate file not added: ${file.name}`); // Debug log
                             }
                         } else {
                             errorSpanElement.textContent = `File "${file.name}" is not a valid PDF, image, or video type.`;
                             showCustomModal(`File "${file.name}" is not a valid PDF, image, or video type. Only PDF, JPG, PNG, GIF, MP4, WebM, Ogg are allowed.`, customModal);
+                            console.error(`Invalid file type rejected: ${file.name} (${fileType})`); // Debug log
                         }
                     }
                     // Pass current file list element based on currentClaimType
                     const currentFileListElement = currentClaimType === 'Damages Claim' ? damagesFileList : shortageFileList;
                     renderAttachedFiles(targetFilesArray, currentFileListElement, errorSpanElement); // Update the list displayed to the user
+                } else {
+                    console.log("No files selected."); // Debug log
                 }
             }
 
@@ -1437,6 +1444,7 @@
                     });
                      errorSpanElement.textContent = ''; // Clear error if files are present
                 }
+                console.log(`Current ${currentClaimType} files in array:`, filesArray.map(f => f.name)); // Debug log
             }
 
             /**
@@ -1549,20 +1557,29 @@
                 reviewModalSubmit.addEventListener('click', () => {
                     console.log('Final submission confirmed. Initiating form submission to Netlify.');
                     hideCustomModal(reviewModal); // Hide review modal
-                    // IMPORTANT: Manually append file inputs' files to a FormData object
-                    // for Netlify forms when doing custom submission.
+                    
+                    // Create a new FormData object from the form to capture all current named inputs
                     const formData = new FormData(mainClaimForm);
 
-                    // Append files to the FormData object
+                    // Manually append files for damages (if any)
                     attachedDamagesFiles.forEach(file => {
-                        formData.append('damagesFiles[]', file);
+                        console.log('Appending damages file:', file.name); // Debug
+                        formData.append('damagesFiles[]', file, file.name); // Add file name for clarity in Netlify
                     });
+                    // Manually append files for shortages (if any)
                     attachedShortageFiles.forEach(file => {
-                        formData.append('shortageFiles[]', file);
+                        console.log('Appending shortage file:', file.name); // Debug
+                        formData.append('shortageFiles[]', file, file.name); // Add file name for clarity in Netlify
                     });
 
-                    // You can optionally add other data if not directly from named inputs
-                    formData.append('claimTypeSelected', currentClaimType);
+                    // Add the selected claim type to formData explicitly for Netlify
+                    formData.append('selectedClaimType', currentClaimType); // Debug
+
+                    // Log formData contents for debugging BEFORE sending
+                    console.log('FormData contents before fetch:');
+                    for (let [key, value] of formData.entries()) {
+                        console.log(`${key}:`, value);
+                    }
 
                     // Perform the actual submission using fetch or XMLHttpRequest
                     fetch("/", {
@@ -1574,8 +1591,11 @@
                             console.log('Form successfully submitted to Netlify!');
                             showCustomModal('', submissionOptionsModal); // Show success options
                         } else {
-                            console.error('Form submission failed with response:', response.status, response.statusText);
-                            showCustomModal('Form submission failed. Please try again or contact support.', customModal);
+                            // Try to read response text for more info on error
+                            return response.text().then(text => {
+                                console.error('Form submission failed with response:', response.status, response.statusText, text);
+                                showCustomModal('Form submission failed. Please try again or contact support. Error: ' + response.status, customModal);
+                            });
                         }
                     })
                     .catch(error => {
