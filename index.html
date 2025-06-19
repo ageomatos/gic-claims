@@ -779,156 +779,162 @@
             </div>
         </nav>
 
-        <!-- Initial content area, initially visible -->
-        <main id="initialContentSection" class="content form-section" style="display: block;">
-            <p>At Gerhards Importers Canada, we strive to provide the best possible service to our customers, and ensuring the safe delivery of your orders is of utmost importance to us. While we make every effort to pack and ship your items securely, occasionally, damages or missing items can occur during transit.</p>
-            <p>Refer to our <a href="https://gerhardscanada.sharepoint.com/:b:/s/PublicSharing/EY4yUu4ede5PoDaHoo2YleAB1C3s-Zxo3OpgSJpN8g_QyQ?e=tKFQPR" class="policy-link" id="policyLink" target="_blank">Damages and Shortages Policy here.</a></p>
-            
-            <!-- Logo section -->
-            <div class="logo">
-                <img src="logo.jpg" alt="Gerhards Importers Canada Logo">
-            </div>
+        <!-- IMPORTANT: Wrap all your form sections inside a <form> tag -->
+        <form name="claim_form" method="POST" data-netlify="true" id="mainClaimForm">
+            <!-- Netlify requires a hidden input for every form if using JavaScript to handle sections -->
+            <input type="hidden" name="form-name" value="claim_form" />
 
-            <!-- Continue button -->
-            <button class="continue-button" id="continueButton">Continue</button>
-        </main>
-
-        <!-- Section for Damages Terms & Conditions, initially hidden -->
-        <section id="damagesTermsSection" class="form-section">
-            <h2>Terms and Conditions for Damages Claim</h2>
-            <p>To ensure the full credit for your claim, the following items must be submitted.</p>
-            <p>Failure to provide any of these within the specified timeframe will result in a reduced credit amount:</p>
-            <ul>
-                <li>A copy of the driver's Proof of Delivery (POD), with any damages clearly noted.</li>
-                <li>Photographic or video evidence of the damages.</li>
-                <li>An accurate count of the damages per product, including brand and description.</li>
-                <li>Submission of all required documentation within 3 business days of the delivery date.</li>
-            </ul>
-            <p class="important-note">Please ensure all information is accurate and provided on time to avoid any reduction in credit.</p>
-            
-            <div class="terms-acceptance">
-                <input type="checkbox" id="acceptDamagesTerms">
-                <label for="acceptDamagesTerms">I accept the terms and conditions for Damages Claim.</label>
-            </div>
-            <div class="button-group">
-                <button class="back-button" id="backButtonDamagesTerms">Back</button>
-                <button class="next-button" id="nextButtonDamagesTerms">Next</button>
-            </div>
-        </section>
-
-        <!-- New Section for Shortage Terms & Conditions, initially hidden -->
-        <section id="shortageTermsSection" class="form-section">
-            <h2>Terms and Conditions for Shortage Claim</h2>
-            <p>To ensure the full credit for your claim, the following items must be submitted.</p>
-            <p>Failure to provide any of these within the specified timeframe will result in a reduced credit amount:</p>
-            <ul>
-                <li>A copy of the driver's Proof of Delivery (POD), with any shortage clearly noted.</li>
-                <li>An accurate count of the missing per product, including brand and description.</li>
-                <li>Submission of all required documentation within 3 business days of the delivery date.</li>
-            </ul>
-            <p class="important-note">Please ensure all information is accurate and provided on time to avoid any reduction in credit.</p>
-            
-            <div class="terms-acceptance">
-                <input type="checkbox" id="acceptShortageTerms">
-                <label for="acceptShortageTerms">I accept the terms and conditions for Shortage Claim.</label>
-            </div>
-            <div class="button-group">
-                <button class="back-button" id="backButtonShortageTerms">Back</button>
-                <button class="next-button" id="nextButtonShortageTerms">Next</button>
-            </div>
-        </section>
-
-        <!-- New Section for Customer Information, initially hidden -->
-        <section id="customerSection" class="form-section">
-            <h2>Customer Information</h2>
-            <div class="form-group">
-                <label for="customerName">Customer Name:</label>
-                <input type="text" id="customerName" name="customerName" required>
-                <span class="error-message" id="customerNameError"></span>
-            </div>
-            <div class="form-group">
-                <label for="packingSlipNumber">Packing Slip Number (5 digits):</label>
-                <!-- Added maxlength="5" to help restrict input directly in HTML -->
-                <input type="number" id="packingSlipNumber" name="packingSlipNumber" required pattern="[0-9]{5}" inputmode="numeric" maxlength="5">
-                <span class="error-message" id="packingSlipNumberError"></span>
-            </div>
-            <div class="button-group">
-                <button class="back-button" id="backButtonCustomer">Back</button>
-                <button class="next-button" id="nextButtonCustomer">Next</button>
-            </div>
-        </section>
-
-        <!-- New Section for Documents, initially hidden -->
-        <section id="documentsSection" class="form-section">
-            <h2>Attach Supporting Documents</h2>
-            <p class="submission-note">
-                Please submit the following information <strong>within 3 business days</strong> to receive 100% credit: 
-            </p>
-
-            <!-- Content for Shortage Claim Documents (initially hidden) -->
-            <div id="shortageDocumentsContent" class="document-content-type">
-                <p class="attachment-guidance-note">
-                    Proof of Delivery (POD) attachments are recommended.
-                </p>
-                <div class="form-group">
-                    <label for="missingCountShortage">Accurate count of the missing CASES per product/brand/description:</label>
-                    <textarea id="missingCountShortage" name="missingCountShortage" rows="4" required placeholder="e.g., 5 cases of Product X - Brand A, 2 cases of Product Y - Brand B"></textarea>
-                    <span class="error-message" id="missingCountShortageError"></span>
+            <!-- Initial content area, initially visible -->
+            <main id="initialContentSection" class="content form-section" style="display: block;">
+                <p>At Gerhards Importers Canada, we strive to provide the best possible service to our customers, and ensuring the safe delivery of your orders is of utmost importance to us. While we make every effort to pack and ship your items securely, occasionally, damages or missing items can occur during transit.</p>
+                <p>Refer to our <a href="https://gerhardscanada.sharepoint.com/:b:/s/PublicSharing/EY4yUu4ede5PoDaHoo2YleAB1C3s-Zxo3OpgSJpN8g_QyQ?e=tKFQPR" class="policy-link" id="policyLink" target="_blank">Damages and Shortages Policy here.</a></p>
+                
+                <!-- Logo section -->
+                <div class="logo">
+                    <img src="logo.jpg" alt="Gerhards Importers Canada Logo">
                 </div>
-                <!-- File upload area for Shortage Claim -->
-                <div class="file-upload-area" id="shortageFileUploadArea">
-                    <input type="file" id="shortageFileInput" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
-                    <p>Drag & Drop your files here or click to browse</p>
-                    <button type="button" class="next-button" style="margin-top: 10px;">Browse Files</button>
-                </div>
-                <ul class="file-list" id="shortageFileList">
-                    <!-- Uploaded files will be listed here -->
+
+                <!-- Continue button -->
+                <button type="button" class="continue-button" id="continueButton">Continue</button>
+            </main>
+
+            <!-- Section for Damages Terms & Conditions, initially hidden -->
+            <section id="damagesTermsSection" class="form-section">
+                <h2>Terms and Conditions for Damages Claim</h2>
+                <p>To ensure the full credit for your claim, the following items must be submitted.</p>
+                <p>Failure to provide any of these within the specified timeframe will result in a reduced credit amount:</p>
+                <ul>
+                    <li>A copy of the driver's Proof of Delivery (POD), with any damages clearly noted.</li>
+                    <li>Photographic or video evidence of the damages.</li>
+                    <li>An accurate count of the damages per product, including brand and description.</li>
+                    <li>Submission of all required documentation within 3 business days of the delivery date.</li>
                 </ul>
-                <span class="error-message" id="shortageFileUploadError"></span>
-            </div>
+                <p class="important-note">Please ensure all information is accurate and provided on time to avoid any reduction in credit.</p>
+                
+                <div class="terms-acceptance">
+                    <input type="checkbox" id="acceptDamagesTerms" name="acceptDamagesTerms">
+                    <label for="acceptDamagesTerms">I accept the terms and conditions for Damages Claim.</label>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonDamagesTerms">Back</button>
+                    <button type="button" class="next-button" id="nextButtonDamagesTerms">Next</button>
+                </div>
+            </section>
 
-            <!-- Content for Damages Claim Documents (initially hidden) -->
-            <div id="damagesDocumentsContent" class="document-content-type">
-                <p class="attachment-guidance-note">
-                    Proof of Delivery (POD) and Damages images attachments are recommended.
-                </p>
-                <div class="form-group">
-                    <label for="damageCountDamages">Accurate count of the damages per product/brand/description (in units):</label>
-                    <textarea id="damageCountDamages" name="damageCountDamages" rows="4" required placeholder="e.g., 10 units of Product X - Brand A (broken bottles), 3 units of Product Y - Brand B (dented cans)"></textarea>
-                    <span class="error-message" id="damageCountDamagesError"></span>
-                </div>
-                <!-- File upload area for Damages Claim -->
-                <div class="file-upload-area" id="damagesFileUploadArea">
-                    <input type="file" id="damagesFileInput" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
-                    <p>Drag & Drop your files here or click to browse</p>
-                    <button type="button" class="next-button" style="margin-top: 10px;">Browse Files</button>
-                </div>
-                <ul class="file-list" id="damagesFileList">
-                    <!-- Uploaded files will be listed here -->
+            <!-- New Section for Shortage Terms & Conditions, initially hidden -->
+            <section id="shortageTermsSection" class="form-section">
+                <h2>Terms and Conditions for Shortage Claim</h2>
+                <p>To ensure the full credit for your claim, the following items must be submitted.</p>
+                <p>Failure to provide any of these within the specified timeframe will result in a reduced credit amount:</p>
+                <ul>
+                    <li>A copy of the driver's Proof of Delivery (POD), with any shortage clearly noted.</li>
+                    <li>An accurate count of the missing per product, including brand and description.</li>
+                    <li>Submission of all required documentation within 3 business days of the delivery date.</li>
                 </ul>
-                <span class="error-message" id="damagesFileUploadError"></span>
-            </div>
+                <p class="important-note">Please ensure all information is accurate and provided on time to avoid any reduction in credit.</p>
+                
+                <div class="terms-acceptance">
+                    <input type="checkbox" id="acceptShortageTerms" name="acceptShortageTerms">
+                    <label for="acceptShortageTerms">I accept the terms and conditions for Shortage Claim.</label>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonShortageTerms">Back</button>
+                    <button type="button" class="next-button" id="nextButtonShortageTerms">Next</button>
+                </div>
+            </section>
 
-            <div class="button-group">
-                <button class="back-button" id="backButtonDocuments">Back</button>
-                <button class="next-button" id="nextButtonDocuments">Next</button>
-            </div>
-        </section>
+            <!-- New Section for Customer Information, initially hidden -->
+            <section id="customerSection" class="form-section">
+                <h2>Customer Information</h2>
+                <div class="form-group">
+                    <label for="customerName">Customer Name:</label>
+                    <input type="text" id="customerName" name="customerName" required>
+                    <span class="error-message" id="customerNameError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="packingSlipNumber">Packing Slip Number (5 digits):</label>
+                    <!-- Added maxlength="5" to help restrict input directly in HTML -->
+                    <input type="number" id="packingSlipNumber" name="packingSlipNumber" required pattern="[0-9]{5}" inputmode="numeric" maxlength="5">
+                    <span class="error-message" id="packingSlipNumberError"></span>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonCustomer">Back</button>
+                    <button type="button" class="next-button" id="nextButtonCustomer">Next</button>
+                </div>
+            </section>
 
-        <!-- New Section for Disclaimer, initially hidden -->
-        <section id="disclaimerSection" class="form-section">
-            <h2>Disclaimer</h2>
-            <p>
-                The absence of ANY of the required supporting documentation for your claim, or if the claim was submitted AFTER the 3rd business day following the delivery date, the credited amount will be reduced accordingly.
-            </p>
-            <p>
-                Please ensure that all necessary documents are provided to avoid further adjustments.
-            </p>
-            <div class="button-group">
-                <button class="back-button" id="backButtonDisclaimer">Back</button>
-                <button class="submit-button" id="submitButtonDisclaimer">Submit</button>
-            </div>
-        </section>
+            <!-- New Section for Documents, initially hidden -->
+            <section id="documentsSection" class="form-section">
+                <h2>Attach Supporting Documents</h2>
+                <p class="submission-note">
+                    Please submit the following information <strong>within 3 business days</strong> to receive 100% credit: 
+                </p>
+
+                <!-- Content for Shortage Claim Documents (initially hidden) -->
+                <div id="shortageDocumentsContent" class="document-content-type">
+                    <p class="attachment-guidance-note">
+                        Proof of Delivery (POD) attachments are recommended.
+                    </p>
+                    <div class="form-group">
+                        <label for="missingCountShortage">Accurate count of the missing CASES per product/brand/description:</label>
+                        <textarea id="missingCountShortage" name="missingCountShortage" rows="4" required placeholder="e.g., 5 cases of Product X - Brand A, 2 cases of Product Y - Brand B"></textarea>
+                        <span class="error-message" id="missingCountShortageError"></span>
+                    </div>
+                    <!-- File upload area for Shortage Claim -->
+                    <div class="file-upload-area" id="shortageFileUploadArea">
+                        <input type="file" id="shortageFileInput" name="shortageFiles[]" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <p>Drag & Drop your files here or click to browse</p>
+                        <button type="button" class="next-button" style="margin-top: 10px;">Browse Files</button>
+                    </div>
+                    <ul class="file-list" id="shortageFileList">
+                        <!-- Uploaded files will be listed here -->
+                    </ul>
+                    <span class="error-message" id="shortageFileUploadError"></span>
+                </div>
+
+                <!-- Content for Damages Claim Documents (initially hidden) -->
+                <div id="damagesDocumentsContent" class="document-content-type">
+                    <p class="attachment-guidance-note">
+                        Proof of Delivery (POD) and Damages images attachments are recommended.
+                    </p>
+                    <div class="form-group">
+                        <label for="damageCountDamages">Accurate count of the damages per product/brand/description (in units):</label>
+                        <textarea id="damageCountDamages" name="damageCountDamages" rows="4" required placeholder="e.g., 10 units of Product X - Brand A (broken bottles), 3 units of Product Y - Brand B (dented cans)"></textarea>
+                        <span class="error-message" id="damageCountDamagesError"></span>
+                    </div>
+                    <!-- File upload area for Damages Claim -->
+                    <div class="file-upload-area" id="damagesFileUploadArea">
+                        <input type="file" id="damagesFileInput" name="damagesFiles[]" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <p>Drag & Drop your files here or click to browse</p>
+                        <button type="button" class="next-button" style="margin-top: 10px;">Browse Files</button>
+                    </div>
+                    <ul class="file-list" id="damagesFileList">
+                        <!-- Uploaded files will be listed here -->
+                    </ul>
+                    <span class="error-message" id="damagesFileUploadError"></span>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonDocuments">Back</button>
+                    <button type="button" class="next-button" id="nextButtonDocuments">Next</button>
+                </div>
+            </section>
+
+            <!-- New Section for Disclaimer, initially hidden -->
+            <section id="disclaimerSection" class="form-section">
+                <h2>Disclaimer</h2>
+                <p>
+                    The absence of ANY of the required supporting documentation for your claim, or if the claim was submitted AFTER the 3rd business day following the delivery date, the credited amount will be reduced accordingly.
+                </p>
+                <p>
+                    Please ensure that all necessary documents are provided to avoid further adjustments.
+                </p>
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonDisclaimer">Back</button>
+                    <button type="submit" class="submit-button" id="submitButtonDisclaimer">Submit</button>
+                </div>
+            </section>
+        </form>
 
 
         <!-- Custom modal for general alerts -->
@@ -936,7 +942,7 @@
             <div class="modal-content">
                 <span class="close-button" id="generalModalClose">&times;</span>
                 <p id="modalMessage"></p>
-                <button id="modalOkButton">OK</button>
+                <button type="button" id="modalOkButton">OK</button>
             </div>
         </div>
 
@@ -955,7 +961,7 @@
                         <span>Shortage Claim</span>
                     </label>
                 </div>
-                <button class="confirm-claim-button" id="confirmClaimSelection">Confirm Selection</button>
+                <button type="button" class="confirm-claim-button" id="confirmClaimSelection">Confirm Selection</button>
             </div>
         </div>
 
@@ -968,8 +974,8 @@
                     <!-- Summary content will be injected here by JavaScript -->
                 </div>
                 <div class="review-button-group">
-                    <button class="back-button" id="reviewModalBack">Back to edit again</button>
-                    <button class="next-button" id="reviewModalSubmit">OK to finish/process</button>
+                    <button type="button" class="back-button" id="reviewModalBack">Back to edit again</button>
+                    <button type="button" class="next-button" id="reviewModalSubmit">OK to finish/process</button>
                 </div>
             </div>
         </div>
@@ -980,8 +986,8 @@
                 <h2>Claim Submitted Successfully!</h2>
                 <p>What would you like to do next?</p>
                 <div class="button-group">
-                    <button class="next-button" id="enterAnotherClaimButton">Enter another claim</button>
-                    <button class="back-button" id="closeFormButton">Close</button>
+                    <button type="button" class="next-button" id="enterAnotherClaimButton">Enter another claim</button>
+                    <button type="button" class="back-button" id="closeFormButton">Close</button>
                 </div>
             </div>
         </div>
@@ -1003,15 +1009,17 @@
             const claimTypeModal = document.getElementById('claimTypeModal');
             const claimTypeModalCloseButton = document.getElementById('claimTypeModalClose');
             const confirmClaimSelectionButton = document.getElementById('confirmClaimSelection');
-            const claimTypeRadios = document.querySelectorAll('input[name="claimType"]');
+            // IMPORTANT: Netlify forms require a name attribute for radio buttons
+            const claimTypeRadios = document.querySelectorAll('input[name="claimType"]'); 
 
             // Form sections
+            const mainClaimForm = document.getElementById('mainClaimForm'); // Reference to the main form
             const initialContentSection = document.getElementById('initialContentSection');
             const damagesTermsSection = document.getElementById('damagesTermsSection');
             const shortageTermsSection = document.getElementById('shortageTermsSection');
             const customerSection = document.getElementById('customerSection');
             const documentsSection = document.getElementById('documentsSection'); 
-            const disclaimerSection = document.getElementById('disclaimerSection'); // New disclaimer section
+            const disclaimerSection = document.getElementById('disclaimerSection'); 
 
             // Elements for Damages Terms & Conditions
             const acceptDamagesTermsCheckbox = document.getElementById('acceptDamagesTerms');
@@ -1126,7 +1134,7 @@
                 customModal.style.display = 'none';
                 claimTypeModal.style.display = 'none';
                 reviewModal.style.display = 'none'; 
-                submissionOptionsModal.style.display = 'none'; // Hide new submission options modal
+                submissionOptionsModal.style.display = 'none'; 
                 // Also hide specific document content divs
                 shortageDocumentsContent.style.display = 'none';
                 damagesDocumentsContent.style.display = 'none';
@@ -1539,11 +1547,41 @@
             // Event listener for "OK to finish/process" in review modal
             if (reviewModalSubmit) {
                 reviewModalSubmit.addEventListener('click', () => {
-                    console.log('Final submission confirmed. Displaying submission options.');
+                    console.log('Final submission confirmed. Initiating form submission to Netlify.');
                     hideCustomModal(reviewModal); // Hide review modal
-                    showCustomModal('', submissionOptionsModal); // Show the new submission options modal
-                    // In a real application, this is where you would send the form data and files to a server.
-                    // For example: submitFormDataToServer();
+                    // IMPORTANT: Manually append file inputs' files to a FormData object
+                    // for Netlify forms when doing custom submission.
+                    const formData = new FormData(mainClaimForm);
+
+                    // Append files to the FormData object
+                    attachedDamagesFiles.forEach(file => {
+                        formData.append('damagesFiles[]', file);
+                    });
+                    attachedShortageFiles.forEach(file => {
+                        formData.append('shortageFiles[]', file);
+                    });
+
+                    // You can optionally add other data if not directly from named inputs
+                    formData.append('claimTypeSelected', currentClaimType);
+
+                    // Perform the actual submission using fetch or XMLHttpRequest
+                    fetch("/", {
+                        method: "POST",
+                        body: formData,
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Form successfully submitted to Netlify!');
+                            showCustomModal('', submissionOptionsModal); // Show success options
+                        } else {
+                            console.error('Form submission failed with response:', response.status, response.statusText);
+                            showCustomModal('Form submission failed. Please try again or contact support.', customModal);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting form:', error);
+                        showCustomModal('An error occurred during submission. Please try again.', customModal);
+                    });
                 });
             }
 
