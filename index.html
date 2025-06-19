@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIC Damages & Shortages Claim Form</title>
+    <title>Damages & Shortages Claim Form</title>
     <!-- Link to Google Fonts for 'Inter' -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -781,8 +781,11 @@
 
         <!-- IMPORTANT: Wrap all your form sections inside a <form> tag -->
         <!-- Add data-netlify-honeypot for bot detection -->
-        <form name="claim_form" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" id="mainClaimForm">
-            <!-- Netlify requires a hidden input for every form if using JavaScript to handle sections -->
+        <form name="claim_form" method="POST" id="mainClaimForm">
+            <!-- IMPORTANT: Remove data-netlify="true" from the form tag itself,
+                        as we will handle submission via the Netlify Function.
+                        However, we still need the hidden input for the Netlify Forms service
+                        to register the form structure during build. -->
             <input type="hidden" name="form-name" value="claim_form" />
             <!-- Honeypot field (hidden from users, but bots might fill it) -->
             <input type="hidden" name="bot-field" />
@@ -885,7 +888,8 @@
                     </div>
                     <!-- File upload area for Shortage Claim -->
                     <div class="file-upload-area" id="shortageFileUploadArea">
-                        <input type="file" id="shortageFileInput" name="shortageFiles[]" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <!-- Removed name="shortageFiles[]" from here to prevent Netlify Forms from handling it, as the function will -->
+                        <input type="file" id="shortageFileInput" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                         <p>Drag & Drop your files here or click to browse</p>
                         <button type="button" class="next-button" style="margin-top: 10px;">Browse Files</button>
                     </div>
@@ -907,7 +911,8 @@
                     </div>
                     <!-- File upload area for Damages Claim -->
                     <div class="file-upload-area" id="damagesFileUploadArea">
-                        <input type="file" id="damagesFileInput" name="damagesFiles[]" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <!-- Removed name="damagesFiles[]" from here to prevent Netlify Forms from handling it, as the function will -->
+                        <input type="file" id="damagesFileInput" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                         <p>Drag & Drop your files here or click to browse</p>
                         <button type="button" class="next-button" style="margin-top: 10px;">Browse Files</button>
                     </div>
@@ -934,7 +939,8 @@
                 </p>
                 <div class="button-group">
                     <button type="button" class="back-button" id="backButtonDisclaimer">Back</button>
-                    <button type="submit" class="submit-button" id="submitButtonDisclaimer">Submit</button>
+                    <!-- Changed to type="button" as JS will handle the fetch to the function -->
+                    <button type="button" class="submit-button" id="submitButtonDisclaimer">Submit</button> 
                 </div>
             </section>
         </form>
@@ -1557,54 +1563,75 @@
 
             // Event listener for "OK to finish/process" in review modal
             if (reviewModalSubmit) {
-                reviewModalSubmit.addEventListener('click', () => {
-                    console.log('Final submission confirmed. Initiating form submission to Netlify.');
+                reviewModalSubmit.addEventListener('click', async () => { // Marked as async for FileReader
+                    console.log('Final submission confirmed. Initiating form submission to Netlify Function.');
                     hideCustomModal(reviewModal); // Hide review modal
                     
-                    // Create a new FormData object from the form to capture all current named inputs
-                    const formData = new FormData(mainClaimForm);
+                    // Create an object to hold all form data including Base64 files
+                    const submissionData = {
+                        claimType: currentClaimType,
+                        customerName: customerNameInput.value.trim(),
+                        packingSlipNumber: packingSlipNumberInput.value.trim(),
+                        acceptDamagesTerms: acceptDamagesTermsCheckbox.checked,
+                        acceptShortageTerms: acceptShortageTermsCheckbox.checked,
+                        // Conditional fields
+                        damageCountDamages: currentClaimType === 'Damages Claim' ? damageCountDamagesInput.value.trim() : undefined,
+                        missingCountShortage: currentClaimType === 'Shortage Claim' ? missingCountShortageInput.value.trim() : undefined,
+                        attachedDamagesFiles: [],
+                        attachedShortageFiles: []
+                    };
 
-                    // Manually append files for damages (if any)
-                    attachedDamagesFiles.forEach(file => {
-                        console.log('Appending damages file:', file.name); // Debug
-                        formData.append('damagesFiles[]', file, file.name); // Add file name for clarity in Netlify
-                    });
-                    // Manually append files for shortages (if any)
-                    attachedShortageFiles.forEach(file => {
-                        console.log('Appending shortage file:', file.name); // Debug
-                        formData.append('shortageFiles[]', file, file.name); // Add file name for clarity in Netlify
-                    });
-
-                    // Add the selected claim type to formData explicitly for Netlify
-                    formData.append('selectedClaimType', currentClaimType); // Debug
-
-                    // Log formData contents for debugging BEFORE sending
-                    console.log('FormData contents before fetch:');
-                    for (let [key, value] of formData.entries()) {
-                        console.log(`${key}:`, value);
-                    }
-
-                    // Perform the actual submission using fetch or XMLHttpRequest
-                    fetch("/", {
-                        method: "POST",
-                        body: formData,
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            console.log('Form successfully submitted to Netlify!');
-                            showCustomModal('', submissionOptionsModal); // Show success options
-                        } else {
-                            // Try to read response text for more info on error
-                            return response.text().then(text => {
-                                console.error('Form submission failed with response:', response.status, response.statusText, text);
-                                showCustomModal('Form submission failed. Please try again or contact support. Error: ' + response.status, customModal);
+                    // Function to convert File to Base64
+                    const fileToBase64 = (file) => {
+                        return new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve({
+                                content: reader.result.split(',')[1], // Base64 string without data:mime/type;base64,
+                                filename: file.name,
+                                type: file.type
                             });
+                            reader.onerror = error => reject(error);
+                            reader.readAsDataURL(file);
+                        });
+                    };
+
+                    // Convert attached files to Base64
+                    try {
+                        // Display a loading message while files are processed
+                        showCustomModal('Preparing files for submission. Please wait...', customModal);
+
+                        const damagesFilePromises = attachedDamagesFiles.map(fileToBase64);
+                        const shortageFilePromises = attachedShortageFiles.map(fileToBase64);
+
+                        submissionData.attachedDamagesFiles = await Promise.all(damagesFilePromises);
+                        submissionData.attachedShortageFiles = await Promise.all(shortageFilePromises);
+
+                        console.log('Files converted to Base64. Submitting data:', submissionData);
+
+                        // Submit data to the Netlify Function
+                        const response = await fetch('/.netlify/functions/submit-claim', { // Endpoint of your Netlify Function
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(submissionData),
+                        });
+
+                        hideCustomModal(customModal); // Hide loading message
+
+                        if (response.ok) {
+                            console.log('Form data successfully sent to Netlify Function!');
+                            showCustomModal('Your claim has been submitted successfully!', submissionOptionsModal); // Show success options
+                        } else {
+                            const errorText = await response.text();
+                            console.error('Submission to Netlify Function failed:', response.status, response.statusText, errorText);
+                            showCustomModal('Form submission failed. Please try again or contact support. Error: ' + response.status, customModal);
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error submitting form:', error);
-                        showCustomModal('An error occurred during submission. Please try again.', customModal);
-                    });
+                    } catch (error) {
+                        hideCustomModal(customModal); // Hide loading message on error
+                        console.error('Error during file conversion or submission:', error);
+                        showCustomModal('An error occurred during submission. Please check console for details.', customModal);
+                    }
                 });
             }
 
