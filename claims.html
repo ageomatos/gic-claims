@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Damages & Shortages Claim Form</title>
+    <title>GIC Damages & Shortages Claim Form</title>
     <!-- Link to Google Fonts for 'Inter' -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -453,31 +453,17 @@
         }
 
         /* Styles for Documents Section (general) */
-        #documentsSection .file-upload-area {
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: border-color 0.2s ease, background-color 0.2s ease;
+        /* Removed .file-upload-area specific styling as it's replaced by individual inputs */
+        #documentsSection .file-input-group {
+            margin-bottom: 15px; /* Space between each file input */
+        }
+        #documentsSection .file-input-group label {
+            font-weight: normal; /* Labels for file inputs might be less bold */
+            font-size: 15px;
+            margin-bottom: 5px;
+            color: #555;
         }
 
-        #documentsSection .file-upload-area:hover {
-            border-color: #5b7da8;
-            background-color: #f0f4f7;
-        }
-
-        #documentsSection .file-upload-area p {
-            color: #666;
-            font-size: 16px;
-            margin: 0;
-            margin-bottom: 10px;
-        }
-
-        #documentsSection .file-upload-area input[type="file"] {
-            display: none; /* Hide the default file input button */
-        }
 
         #documentsSection .file-list {
             list-style: none;
@@ -554,6 +540,14 @@
             margin-bottom: 15px;
             text-align: center;
             line-height: 1.4;
+        }
+        .form-limit-note {
+            font-size: 14px;
+            color: #cc0000; /* Red for warning */
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 25px;
+            font-weight: 500;
         }
 
         /* Styles for Disclaimer Section */
@@ -779,156 +773,182 @@
             </div>
         </nav>
 
-        <!-- Initial content area, initially visible -->
-        <main id="initialContentSection" class="content form-section" style="display: block;">
-            <p>At Gerhards Importers Canada, we strive to provide the best possible service to our customers, and ensuring the safe delivery of your orders is of utmost importance to us. While we make every effort to pack and ship your items securely, occasionally, damages or missing items can occur during transit.</p>
-            <p>Refer to our <a href="https://gerhardscanada.sharepoint.com/:b:/s/PublicSharing/EY4yUu4ede5PoDaHoo2YleAB1C3s-Zxo3OpgSJpN8g_QyQ?e=tKFQPR" class="policy-link" id="policyLink" target="_blank">Damages and Shortages Policy here.</a></p>
-            
-            <!-- Logo section -->
-            <div class="logo">
-                <img src="logo.jpg" alt="Gerhards Importers Canada Logo">
-            </div>
+        <!-- IMPORTANT: Wrap all your form sections inside a <form> tag -->
+        <!-- We are relying on Netlify's built-in form handling, so data-netlify="true" is needed. -->
+        <form name="claim_form" method="POST" data-netlify="true" id="mainClaimForm" data-netlify-honeypot="bot-field" enctype="multipart/form-data">
+            <!-- Netlify requires a hidden input for every form -->
+            <input type="hidden" name="form-name" value="claim_form" />
+            <!-- Honeypot field (hidden from users, but bots might fill it) -->
+            <input type="hidden" name="bot-field" />
 
-            <!-- Continue button -->
-            <button class="continue-button" id="continueButton">Continue</button>
-        </main>
-
-        <!-- Section for Damages Terms & Conditions, initially hidden -->
-        <section id="damagesTermsSection" class="form-section">
-            <h2>Terms and Conditions for Damages Claim</h2>
-            <p>To ensure the full credit for your claim, the following items must be submitted.</p>
-            <p>Failure to provide any of these within the specified timeframe will result in a reduced credit amount:</p>
-            <ul>
-                <li>A copy of the driver's Proof of Delivery (POD), with any damages clearly noted.</li>
-                <li>Photographic or video evidence of the damages.</li>
-                <li>An accurate count of the damages per product, including brand and description.</li>
-                <li>Submission of all required documentation within 3 business days of the delivery date.</li>
-            </ul>
-            <p class="important-note">Please ensure all information is accurate and provided on time to avoid any reduction in credit.</p>
-            
-            <div class="terms-acceptance">
-                <input type="checkbox" id="acceptDamagesTerms">
-                <label for="acceptDamagesTerms">I accept the terms and conditions for Damages Claim.</label>
-            </div>
-            <div class="button-group">
-                <button class="back-button" id="backButtonDamagesTerms">Back</button>
-                <button class="next-button" id="nextButtonDamagesTerms">Next</button>
-            </div>
-        </section>
-
-        <!-- New Section for Shortage Terms & Conditions, initially hidden -->
-        <section id="shortageTermsSection" class="form-section">
-            <h2>Terms and Conditions for Shortage Claim</h2>
-            <p>To ensure the full credit for your claim, the following items must be submitted.</p>
-            <p>Failure to provide any of these within the specified timeframe will result in a reduced credit amount:</p>
-            <ul>
-                <li>A copy of the driver's Proof of Delivery (POD), with any shortage clearly noted.</li>
-                <li>An accurate count of the missing per product, including brand and description.</li>
-                <li>Submission of all required documentation within 3 business days of the delivery date.</li>
-            </ul>
-            <p class="important-note">Please ensure all information is accurate and provided on time to avoid any reduction in credit.</p>
-            
-            <div class="terms-acceptance">
-                <input type="checkbox" id="acceptShortageTerms">
-                <label for="acceptShortageTerms">I accept the terms and conditions for Shortage Claim.</label>
-            </div>
-            <div class="button-group">
-                <button class="back-button" id="backButtonShortageTerms">Back</button>
-                <button class="next-button" id="nextButtonShortageTerms">Next</button>
-            </div>
-        </section>
-
-        <!-- New Section for Customer Information, initially hidden -->
-        <section id="customerSection" class="form-section">
-            <h2>Customer Information</h2>
-            <div class="form-group">
-                <label for="customerName">Customer Name:</label>
-                <input type="text" id="customerName" name="customerName" required>
-                <span class="error-message" id="customerNameError"></span>
-            </div>
-            <div class="form-group">
-                <label for="packingSlipNumber">Packing Slip Number (5 digits):</label>
-                <!-- Added maxlength="5" to help restrict input directly in HTML -->
-                <input type="number" id="packingSlipNumber" name="packingSlipNumber" required pattern="[0-9]{5}" inputmode="numeric" maxlength="5">
-                <span class="error-message" id="packingSlipNumberError"></span>
-            </div>
-            <div class="button-group">
-                <button class="back-button" id="backButtonCustomer">Back</button>
-                <button class="next-button" id="nextButtonCustomer">Next</button>
-            </div>
-        </section>
-
-        <!-- New Section for Documents, initially hidden -->
-        <section id="documentsSection" class="form-section">
-            <h2>Attach Supporting Documents</h2>
-            <p class="submission-note">
-                Please submit the following information <strong>within 3 business days</strong> to receive 100% credit: 
-            </p>
-
-            <!-- Content for Shortage Claim Documents (initially hidden) -->
-            <div id="shortageDocumentsContent" class="document-content-type">
-                <p class="attachment-guidance-note">
-                    Proof of Delivery (POD) attachments are recommended.
-                </p>
-                <div class="form-group">
-                    <label for="missingCountShortage">Accurate count of the missing CASES per product/brand/description:</label>
-                    <textarea id="missingCountShortage" name="missingCountShortage" rows="4" required placeholder="e.g., 5 cases of Product X - Brand A, 2 cases of Product Y - Brand B"></textarea>
-                    <span class="error-message" id="missingCountShortageError"></span>
+            <!-- Initial content area, initially visible -->
+            <main id="initialContentSection" class="content form-section" style="display: block;">
+                <p>At Gerhards Importers Canada, we strive to provide the best possible service to our customers, and ensuring the safe delivery of your orders is of utmost importance to us. While we make every effort to pack and ship your items securely, occasionally, damages or missing items can occur during transit.</p>
+                <p>Refer to our <a href="https://gerhardscanada.sharepoint.com/:b:/s/PublicSharing/EY4yUu4ede5PoDaHoo2YleAB1C3s-Zxo3OpgSJpN8g_QyQ?e=tKFQPR" class="policy-link" id="policyLink" target="_blank">Damages and Shortages Policy here.</a></p>
+                
+                <!-- Logo section -->
+                <div class="logo">
+                    <img src="logo.jpg" alt="Gerhards Importers Canada Logo">
                 </div>
-                <!-- File upload area for Shortage Claim -->
-                <div class="file-upload-area" id="shortageFileUploadArea">
-                    <input type="file" id="shortageFileInput" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
-                    <p>Drag & Drop your files here or click to browse</p>
-                    <button type="button" class="next-button" style="margin-top: 10px;">Browse Files</button>
-                </div>
-                <ul class="file-list" id="shortageFileList">
-                    <!-- Uploaded files will be listed here -->
+
+                <!-- Continue button (type="button" to prevent early submission) -->
+                <button type="button" class="continue-button" id="continueButton">Continue</button>
+            </main>
+
+            <!-- Section for Damages Terms & Conditions, initially hidden -->
+            <section id="damagesTermsSection" class="form-section">
+                <h2>Terms and Conditions for Damages Claim</h2>
+                <p>To ensure the full credit for your claim, the following items must be submitted.</p>
+                <p>Failure to provide any of these within the specified timeframe will result in a reduced credit amount:</p>
+                <ul>
+                    <li>A copy of the driver's Proof of Delivery (POD), with any damages clearly noted.</li>
+                    <li>Photographic or video evidence of the damages.</li>
+                    <li>An accurate count of the damages per product, including brand and description.</li>
+                    <li>Submission of all required documentation within 3 business days of the delivery date.</li>
                 </ul>
-                <span class="error-message" id="shortageFileUploadError"></span>
-            </div>
+                <p class="important-note">Please ensure all information is accurate and provided on time to avoid any reduction in credit.</p>
+                
+                <div class="terms-acceptance">
+                    <input type="checkbox" id="acceptDamagesTerms" name="acceptDamagesTerms">
+                    <label for="acceptDamagesTerms">I accept the terms and conditions for Damages Claim.</label>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonDamagesTerms">Back</button>
+                    <button type="button" class="next-button" id="nextButtonDamagesTerms">Next</button>
+                </div>
+            </section>
 
-            <!-- Content for Damages Claim Documents (initially hidden) -->
-            <div id="damagesDocumentsContent" class="document-content-type">
-                <p class="attachment-guidance-note">
-                    Proof of Delivery (POD) and Damages images attachments are recommended.
-                </p>
-                <div class="form-group">
-                    <label for="damageCountDamages">Accurate count of the damages per product/brand/description (in units):</label>
-                    <textarea id="damageCountDamages" name="damageCountDamages" rows="4" required placeholder="e.g., 10 units of Product X - Brand A (broken bottles), 3 units of Product Y - Brand B (dented cans)"></textarea>
-                    <span class="error-message" id="damageCountDamagesError"></span>
-                </div>
-                <!-- File upload area for Damages Claim -->
-                <div class="file-upload-area" id="damagesFileUploadArea">
-                    <input type="file" id="damagesFileInput" multiple accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
-                    <p>Drag & Drop your files here or click to browse</p>
-                    <button type="button" class="next-button" style="margin-top: 10px;">Browse Files</button>
-                </div>
-                <ul class="file-list" id="damagesFileList">
-                    <!-- Uploaded files will be listed here -->
+            <!-- New Section for Shortage Terms & Conditions, initially hidden -->
+            <section id="shortageTermsSection" class="form-section">
+                <h2>Terms and Conditions for Shortage Claim</h2>
+                <p>To ensure the full credit for your claim, the following items must be submitted.</p>
+                <p>Failure to provide any of these within the specified timeframe will result in a reduced credit amount:</p>
+                <ul>
+                    <li>A copy of the driver's Proof of Delivery (POD), with any shortage clearly noted.</li>
+                    <li>An accurate count of the missing per product, including brand and description.</li>
+                    <li>Submission of all required documentation within 3 business days of the delivery date.</li>
                 </ul>
-                <span class="error-message" id="damagesFileUploadError"></span>
-            </div>
+                <p class="important-note">Please ensure all information is accurate and provided on time to avoid any reduction in credit.</p>
+                
+                <div class="terms-acceptance">
+                    <input type="checkbox" id="acceptShortageTerms" name="acceptShortageTerms">
+                    <label for="acceptShortageTerms">I accept the terms and conditions for Shortage Claim.</label>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonShortageTerms">Back</button>
+                    <button type="button" class="next-button" id="nextButtonShortageTerms">Next</button>
+                </div>
+            </section>
 
-            <div class="button-group">
-                <button class="back-button" id="backButtonDocuments">Back</button>
-                <button class="next-button" id="nextButtonDocuments">Next</button>
-            </div>
-        </section>
+            <!-- New Section for Customer Information, initially hidden -->
+            <section id="customerSection" class="form-section">
+                <h2>Customer Information</h2>
+                <div class="form-group">
+                    <label for="customerName">Customer Name:</label>
+                    <input type="text" id="customerName" name="customerName" required>
+                    <span class="error-message" id="customerNameError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="packingSlipNumber">Packing Slip Number (5 digits):</label>
+                    <input type="number" id="packingSlipNumber" name="packingSlipNumber" required pattern="[0-9]{5}" inputmode="numeric" maxlength="5">
+                    <span class="error-message" id="packingSlipNumberError"></span>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonCustomer">Back</button>
+                    <button type="button" class="next-button" id="nextButtonCustomer">Next</button>
+                </div>
+            </section>
 
-        <!-- New Section for Disclaimer, initially hidden -->
-        <section id="disclaimerSection" class="form-section">
-            <h2>Disclaimer</h2>
-            <p>
-                The absence of ANY of the required supporting documentation for your claim, or if the claim was submitted AFTER the 3rd business day following the delivery date, the credited amount will be reduced accordingly.
-            </p>
-            <p>
-                Please ensure that all necessary documents are provided to avoid further adjustments.
-            </p>
-            <div class="button-group">
-                <button class="back-button" id="backButtonDisclaimer">Back</button>
-                <button class="submit-button" id="submitButtonDisclaimer">Submit</button>
-            </div>
-        </section>
+            <!-- New Section for Documents, initially hidden -->
+            <section id="documentsSection" class="form-section">
+                <h2>Attach Supporting Documents</h2>
+                <p class="submission-note">
+                    Please submit the following information <strong>within 3 business days</strong> to receive 100% credit: 
+                </p>
+                <p class="form-limit-note">Please note: The total size of all attachments for this form cannot exceed 8 MB.</p>
+
+                <!-- Content for Shortage Claim Documents (initially hidden) -->
+                <div id="shortageDocumentsContent" class="document-content-type">
+                    <p class="attachment-guidance-note">
+                        Proof of Delivery (POD) attachments are recommended.
+                    </p>
+                    <div class="form-group">
+                        <label for="missingCountShortage">Accurate count of the missing CASES per product/brand/description:</label>
+                        <textarea id="missingCountShortage" name="missingCountShortage" rows="4" required placeholder="e.g., 5 cases of Product X - Brand A, 2 cases of Product Y - Brand B"></textarea>
+                        <span class="error-message" id="missingCountShortageError"></span>
+                    </div>
+                    <!-- Four distinct file input fields for shortage claim -->
+                    <div class="file-input-group">
+                        <label for="shortageFile1">Attachment 1:</label>
+                        <input type="file" id="shortageFile1" name="shortage_file_1" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                    </div>
+                    <div class="file-input-group">
+                        <label for="shortageFile2">Attachment 2:</label>
+                        <input type="file" id="shortageFile2" name="shortage_file_2" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                    </div>
+                    <div class="file-input-group">
+                        <label for="shortageFile3">Attachment 3:</label>
+                        <input type="file" id="shortageFile3" name="shortage_file_3" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                    </div>
+                    <div class="file-input-group">
+                        <label for="shortageFile4">Attachment 4:</label>
+                        <input type="file" id="shortageFile4" name="shortage_file_4" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                    </div>
+                    <span class="error-message" id="shortageFileUploadError"></span>
+                </div>
+
+                <!-- Content for Damages Claim Documents (initially hidden) -->
+                <div id="damagesDocumentsContent" class="document-content-type">
+                    <p class="attachment-guidance-note">
+                        Proof of Delivery (POD) and Damages images attachments are recommended.
+                    </p>
+                    <div class="form-group">
+                        <label for="damageCountDamages">Accurate count of the damages per product/brand/description (in units):</label>
+                        <textarea id="damageCountDamages" name="damageCountDamages" rows="4" required placeholder="e.g., 10 units of Product X - Brand A (broken bottles), 3 units of Product Y - Brand B (dented cans)"></textarea>
+                        <span class="error-message" id="damageCountDamagesError"></span>
+                    </div>
+                    <!-- Four distinct file input fields for damages claim -->
+                    <div class="file-input-group">
+                        <label for="damagesFile1">Attachment 1:</label>
+                        <input type="file" id="damagesFile1" name="damages_file_1" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                    </div>
+                    <div class="file-input-group">
+                        <label for="damagesFile2">Attachment 2:</label>
+                        <input type="file" id="damagesFile2" name="damages_file_2" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                    </div>
+                    <div class="file-input-group">
+                        <label for="damagesFile3">Attachment 3:</label>
+                        <input type="file" id="damagesFile3" name="damages_file_3" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                    </div>
+                    <div class="file-input-group">
+                        <label for="damagesFile4">Attachment 4:</label>
+                        <input type="file" id="damagesFile4" name="damages_file_4" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                    </div>
+                    <span class="error-message" id="damagesFileUploadError"></span>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonDocuments">Back</button>
+                    <button type="button" class="next-button" id="nextButtonDocuments">Next</button>
+                </div>
+            </section>
+
+            <!-- New Section for Disclaimer, initially hidden -->
+            <section id="disclaimerSection" class="form-section">
+                <h2>Disclaimer</h2>
+                <p>
+                    The absence of ANY of the required supporting documentation for your claim, or if the claim was submitted AFTER the 3rd business day following the delivery date, the credited amount will be reduced accordingly.
+                </p>
+                <p>
+                    Please ensure that all necessary documents are provided to avoid further adjustments.
+                </p>
+                <div class="button-group">
+                    <button type="button" class="back-button" id="backButtonDisclaimer">Back</button>
+                    <!-- IMPORTANT: Changed to type="submit" so the form submits to Netlify Forms -->
+                    <button type="submit" class="submit-button" id="submitButtonDisclaimer">Submit</button> 
+                </div>
+            </section>
+        </form>
 
 
         <!-- Custom modal for general alerts -->
@@ -936,7 +956,7 @@
             <div class="modal-content">
                 <span class="close-button" id="generalModalClose">&times;</span>
                 <p id="modalMessage"></p>
-                <button id="modalOkButton">OK</button>
+                <button type="button" id="modalOkButton">OK</button>
             </div>
         </div>
 
@@ -955,7 +975,7 @@
                         <span>Shortage Claim</span>
                     </label>
                 </div>
-                <button class="confirm-claim-button" id="confirmClaimSelection">Confirm Selection</button>
+                <button type="button" class="confirm-claim-button" id="confirmClaimSelection">Confirm Selection</button>
             </div>
         </div>
 
@@ -968,8 +988,9 @@
                     <!-- Summary content will be injected here by JavaScript -->
                 </div>
                 <div class="review-button-group">
-                    <button class="back-button" id="reviewModalBack">Back to edit again</button>
-                    <button class="next-button" id="reviewModalSubmit">OK to finish/process</button>
+                    <button type="button" class="back-button" id="reviewModalBack">Back to edit again</button>
+                    <!-- IMPORTANT: Changed to type="button" as the actual submit will be handled by the form's natural submission -->
+                    <button type="button" class="next-button" id="reviewModalSubmit">OK to finish/process</button> 
                 </div>
             </div>
         </div>
@@ -980,8 +1001,8 @@
                 <h2>Claim Submitted Successfully!</h2>
                 <p>What would you like to do next?</p>
                 <div class="button-group">
-                    <button class="next-button" id="enterAnotherClaimButton">Enter another claim</button>
-                    <button class="back-button" id="closeFormButton">Close</button>
+                    <button type="button" class="next-button" id="enterAnotherClaimButton">Enter another claim</button>
+                    <button type="button" class="back-button" id="closeFormButton">Close</button>
                 </div>
             </div>
         </div>
@@ -1003,15 +1024,16 @@
             const claimTypeModal = document.getElementById('claimTypeModal');
             const claimTypeModalCloseButton = document.getElementById('claimTypeModalClose');
             const confirmClaimSelectionButton = document.getElementById('confirmClaimSelection');
-            const claimTypeRadios = document.querySelectorAll('input[name="claimType"]');
+            const claimTypeRadios = document.querySelectorAll('input[name="claimType"]'); 
 
             // Form sections
+            const mainClaimForm = document.getElementById('mainClaimForm'); // Reference to the main form
             const initialContentSection = document.getElementById('initialContentSection');
             const damagesTermsSection = document.getElementById('damagesTermsSection');
             const shortageTermsSection = document.getElementById('shortageTermsSection');
             const customerSection = document.getElementById('customerSection');
             const documentsSection = document.getElementById('documentsSection'); 
-            const disclaimerSection = document.getElementById('disclaimerSection'); // New disclaimer section
+            const disclaimerSection = document.getElementById('disclaimerSection'); 
 
             // Elements for Damages Terms & Conditions
             const acceptDamagesTermsCheckbox = document.getElementById('acceptDamagesTerms');
@@ -1040,17 +1062,19 @@
             const missingCountShortageInput = document.getElementById('missingCountShortage');
             const missingCountShortageError = document.getElementById('missingCountShortageError');
 
-            // File upload elements (general, but managed by specific sections)
-            const shortageFileUploadArea = document.getElementById('shortageFileUploadArea');
-            const shortageFileInput = document.getElementById('shortageFileInput');
-            const shortageFileList = document.getElementById('shortageFileList');
-            const shortageFileUploadError = document.getElementById('shortageFileUploadError');
-            
-            const damagesFileUploadArea = document.getElementById('damagesFileUploadArea');
-            const damagesFileInput = document.getElementById('damagesFileInput');
-            const damagesFileList = document.getElementById('damagesFileList');
-            const damagesFileUploadError = document.getElementById('damagesFileUploadError');
+            // File input elements for Damages Claim (four distinct inputs)
+            const damagesFile1Input = document.getElementById('damagesFile1');
+            const damagesFile2Input = document.getElementById('damagesFile2');
+            const damagesFile3Input = document.getElementById('damagesFile3');
+            const damagesFile4Input = document.getElementById('damagesFile4');
+            const damagesFileUploadError = document.getElementById('damagesFileUploadError'); // General error for damages files
 
+            // File input elements for Shortage Claim (four distinct inputs)
+            const shortageFile1Input = document.getElementById('shortageFile1');
+            const shortageFile2Input = document.getElementById('shortageFile2');
+            const shortageFile3Input = document.getElementById('shortageFile3');
+            const shortageFile4Input = document.getElementById('shortageFile4');
+            const shortageFileUploadError = document.getElementById('shortageFileUploadError'); // General error for shortage files
 
             const nextButtonDocuments = document.getElementById('nextButtonDocuments');
             const backButtonDocuments = document.getElementById('backButtonDocuments');
@@ -1071,11 +1095,8 @@
             const enterAnotherClaimButton = document.getElementById('enterAnotherClaimButton');
             const closeFormButton = document.getElementById('closeFormButton');
 
-
-            // Array to store selected files for damages and shortage separately
-            let attachedShortageFiles = [];
-            let attachedDamagesFiles = [];
-            let currentClaimType = ''; // To store the selected claim type globally
+            // Global variable to store current claim type
+            let currentClaimType = ''; 
 
             const progressSteps = document.querySelectorAll('.progress-bar .step');
 
@@ -1126,7 +1147,7 @@
                 customModal.style.display = 'none';
                 claimTypeModal.style.display = 'none';
                 reviewModal.style.display = 'none'; 
-                submissionOptionsModal.style.display = 'none'; // Hide new submission options modal
+                submissionOptionsModal.style.display = 'none'; 
                 // Also hide specific document content divs
                 shortageDocumentsContent.style.display = 'none';
                 damagesDocumentsContent.style.display = 'none';
@@ -1140,32 +1161,33 @@
                 initialContentSection.style.display = 'block'; // Show initial section
                 updateProgressBar(1); // Reset progress bar to Policy
 
-                // Reset stored data
-                attachedShortageFiles = [];
-                attachedDamagesFiles = [];
-                currentClaimType = '';
-
-                // Reset form fields
-                customerNameInput.value = '';
-                packingSlipNumberInput.value = '';
-                damageCountDamagesInput.value = '';
-                missingCountShortageInput.value = '';
-                acceptDamagesTermsCheckbox.checked = false;
-                acceptShortageTermsCheckbox.checked = false;
+                // Clear all form fields using native form.reset()
+                mainClaimForm.reset(); 
                 
-                // Reset file lists and errors
-                renderAttachedFiles(attachedDamagesFiles, damagesFileList, damagesFileUploadError);
-                renderAttachedFiles(attachedShortageFiles, shortageFileList, shortageFileUploadError);
+                // Manually reset values for inputs that form.reset() might not completely clear
+                damagesFile1Input.value = ''; 
+                damagesFile2Input.value = ''; 
+                damagesFile3Input.value = ''; 
+                damagesFile4Input.value = ''; 
+                shortageFile1Input.value = ''; 
+                shortageFile2Input.value = ''; 
+                shortageFile3Input.value = ''; 
+                shortageFile4Input.value = ''; 
+
+                // Reset error messages
                 customerNameError.textContent = '';
                 packingSlipNumberError.textContent = '';
                 damageCountDamagesError.textContent = '';
                 missingCountShortageError.textContent = '';
-                damagesFileInput.value = ''; // Clear file input value
-                shortageFileInput.value = ''; // Clear file input value
+                damagesFileUploadError.textContent = '';
+                shortageFileUploadError.textContent = '';
 
-                // Reset radio buttons
+                // Reset global claim type tracker
+                currentClaimType = ''; 
+
+                // Ensure 'Damages Claim' radio is checked by default again if it was initially
                 if (claimTypeRadios.length > 0) {
-                    claimTypeRadios[0].checked = true; // Set 'Damages Claim' as default again
+                    claimTypeRadios[0].checked = true;
                 }
                 console.log('Form reset to initial state.');
             }
@@ -1299,12 +1321,10 @@
                         // Show specific document content based on selected claim type
                         if (currentClaimType === 'Damages Claim') {
                             damagesDocumentsContent.style.display = 'block';
-                            // Initial render for damages files
-                            renderAttachedFiles(attachedDamagesFiles, damagesFileList, damagesFileUploadError);
+                            // No initial rendering needed for individual file inputs, Netlify handles them directly.
                         } else if (currentClaimType === 'Shortage Claim') {
                             shortageDocumentsContent.style.display = 'block';
-                            // Initial render for shortage files
-                            renderAttachedFiles(attachedShortageFiles, shortageFileList, shortageFileUploadError);
+                            // No initial rendering needed for individual file inputs, Netlify handles them directly.
                         }
                     } else {
                         showCustomModal('Please correct the errors in the customer information form.', customModal);
@@ -1328,122 +1348,9 @@
                 });
             }
 
-            // --- Documents Section Logic (Generalized for both claim types) ---
-
-            /**
-             * Attaches a click listener to a file upload area to trigger its associated file input.
-             * @param {HTMLElement} uploadAreaElement - The div acting as the click area.
-             * @param {HTMLElement} fileInputElement - The actual hidden file input.
-             */
-            function setupFileUploadArea(uploadAreaElement, fileInputElement) {
-                if (uploadAreaElement && fileInputElement) {
-                    uploadAreaElement.addEventListener('click', () => {
-                        fileInputElement.click();
-                    });
-                }
-            }
-
-            // Setup for Damages File Upload
-            setupFileUploadArea(damagesFileUploadArea, damagesFileInput);
-            // Setup for Shortage File Upload
-            setupFileUploadArea(shortageFileUploadArea, shortageFileInput);
-
-
-            /**
-             * Handles file selection for either damages or shortage files.
-             * @param {Event} event - The change event from the file input.
-             * @param {Array<File>} targetFilesArray - The array to store the files (e.g., attachedDamagesFiles or attachedShortageFiles).
-             * @param {HTMLElement} errorSpanElement - The span to display file-specific errors.
-             */
-            function handleFileSelection(event, targetFilesArray, errorSpanElement) {
-                errorSpanElement.textContent = ''; // Clear previous errors
-                const files = event.target.files;
-
-                if (files.length > 0) {
-                    for (let i = 0; i < files.length; i++) {
-                        const file = files[i];
-                        const fileType = file.type;
-
-                        // Validate file type (PDF, image, video)
-                        if (fileType.startsWith('image/') || fileType.startsWith('video/') || fileType === 'application/pdf') {
-                            // Check if file with same name already exists to prevent duplicates
-                            if (!targetFilesArray.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
-                                targetFilesArray.push(file); // Add to our array of attached files
-                            } else {
-                                showCustomModal(`File "${file.name}" has already been added to this section.`, customModal);
-                            }
-                        } else {
-                            errorSpanElement.textContent = `File "${file.name}" is not a valid PDF, image, or video type.`;
-                            showCustomModal(`File "${file.name}" is not a valid PDF, image, or video type. Only PDF, JPG, PNG, GIF, MP4, WebM, Ogg are allowed.`, customModal);
-                        }
-                    }
-                    // Pass current file list element based on currentClaimType
-                    const currentFileListElement = currentClaimType === 'Damages Claim' ? damagesFileList : shortageFileList;
-                    renderAttachedFiles(targetFilesArray, currentFileListElement, errorSpanElement); // Update the list displayed to the user
-                }
-            }
-
-            // Add change listeners for both file inputs
-            if (damagesFileInput) {
-                damagesFileInput.addEventListener('change', (event) => {
-                    handleFileSelection(event, attachedDamagesFiles, damagesFileUploadError);
-                });
-            }
-            if (shortageFileInput) {
-                shortageFileInput.addEventListener('change', (event) => {
-                    handleFileSelection(event, attachedShortageFiles, shortageFileUploadError);
-                });
-            }
-
-
-            /**
-             * Renders the list of attached files in the UI for a specific claim type.
-             * @param {Array<File>} filesArray - The array of files to render.
-             * @param {HTMLElement} fileListElement - The ul element to render files into.
-             * @param {HTMLElement} errorSpanElement - The error message span for this file list.
-             */
-            function renderAttachedFiles(filesArray, fileListElement, errorSpanElement) {
-                fileListElement.innerHTML = ''; // Clear current list
-                if (filesArray.length === 0) {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = 'No files attached yet.';
-                    fileListElement.appendChild(listItem);
-                    // Attachments are not required, so no error is displayed here.
-                    errorSpanElement.textContent = ''; 
-                } else {
-                    filesArray.forEach((file, index) => {
-                        const listItem = document.createElement('li');
-                        listItem.textContent = file.name;
-
-                        // Add a remove button
-                        const removeButton = document.createElement('button');
-                        removeButton.textContent = '×'; // 'x' character for close
-                        removeButton.classList.add('remove-file');
-                        removeButton.title = `Remove ${file.name}`;
-                        removeButton.addEventListener('click', (event) => {
-                            event.stopPropagation(); // Prevent triggering the parent li click
-                            removeFile(index, filesArray, fileListElement, errorSpanElement);
-                        });
-                        listItem.appendChild(removeButton);
-                        fileListElement.appendChild(listItem);
-                    });
-                     errorSpanElement.textContent = ''; // Clear error if files are present
-                }
-            }
-
-            /**
-             * Removes a file from the attachedFiles array and updates the UI for a specific claim type.
-             * @param {number} indexToRemove - The index of the file to remove.
-             * @param {Array<File>} filesArray - The array from which to remove the file.
-             * @param {HTMLElement} fileListElement - The ul element to re-render.
-             * @param {HTMLElement} errorSpanElement - The error message span for this file list.
-             */
-            function removeFile(indexToRemove, filesArray, fileListElement, errorSpanElement) {
-                filesArray.splice(indexToRemove, 1); // Remove from array
-                renderAttachedFiles(filesArray, fileListElement, errorSpanElement); // Re-render the list
-                console.log('File removed. Current files:', filesArray.map(f => f.name));
-            }
-            
+            // --- Documents Section Logic ---
+            // Removed handleFileSelection, renderAttachedFiles, removeFile as they managed dynamic lists.
+            // Individual file inputs now rely on browser default behavior.
 
             // Event listener for 'Next' button in Documents section
             if (nextButtonDocuments) {
@@ -1452,8 +1359,10 @@
                     // Reset all document-related errors
                     damageCountDamagesError.textContent = '';
                     missingCountShortageError.textContent = '';
-                    shortageFileUploadError.textContent = '';
-                    damagesFileUploadError.textContent = '';
+                    // No specific file input error spans (e.g., shortageFile1Error) in this version
+                    // as required validation for attachments is removed.
+                    shortageFileUploadError.textContent = ''; // Still clear general upload error if it was set by invalid file type
+                    damagesFileUploadError.textContent = ''; // Still clear general upload error if it was set by invalid file type
 
 
                     if (currentClaimType === 'Damages Claim') {
@@ -1462,14 +1371,14 @@
                             damageCountDamagesError.textContent = 'Accurate count of damages is required.';
                             isValid = false;
                         }
-                        // Attachments are NOT required for Damages Claim in this version.
+                        // Attachments are NOT required. No file count validation.
                     } else if (currentClaimType === 'Shortage Claim') {
                         // Validate 'Accurate count of missing CASES' textbox for Shortage Claim
                         if (missingCountShortageInput.value.trim() === '') {
                             missingCountShortageError.textContent = 'Accurate count of missing CASES is required.';
                             isValid = false;
                         }
-                        // Attachments are NOT required for Shortage Claim in this version.
+                        // Attachments are NOT required. No file count validation.
                     }
 
                     if (isValid) {
@@ -1485,7 +1394,9 @@
 
             // --- Disclaimer Section Logic ---
             if (submitButtonDisclaimer) {
-                submitButtonDisclaimer.addEventListener('click', () => {
+                submitButtonDisclaimer.addEventListener('click', (event) => {
+                    // Prevent the default form submission for review
+                    event.preventDefault(); 
                     console.log('Submit button clicked. Showing review modal.');
                     showReviewModal(); // Call function to show review summary
                 });
@@ -1493,6 +1404,7 @@
 
             /**
              * Gathers all entered data and displays it in the review modal.
+             * This version retrieves file names directly from input.files.
              */
             function showReviewModal() {
                 let summaryHtml = `
@@ -1507,10 +1419,17 @@
                         <h3>Damages Details:</h3>
                         <p><strong>Accurate Count (Units):</strong> ${damageCountDamagesInput.value.trim()}</p>
                     `;
-                    if (attachedDamagesFiles.length > 0) {
+                    let damagesFiles = [];
+                    // Collect file names from each input if files are selected
+                    if (damagesFile1Input.files.length > 0) damagesFiles.push(damagesFile1Input.files[0].name);
+                    if (damagesFile2Input.files.length > 0) damagesFiles.push(damagesFile2Input.files[0].name);
+                    if (damagesFile3Input.files.length > 0) damagesFiles.push(damagesFile3Input.files[0].name);
+                    if (damagesFile4Input.files.length > 0) damagesFiles.push(damagesFile4Input.files[0].name);
+
+                    if (damagesFiles.length > 0) {
                         summaryHtml += `<p><strong>Attached Damages Files:</strong></p><ul>`;
-                        attachedDamagesFiles.forEach(file => {
-                            summaryHtml += `<li>${file.name}</li>`;
+                        damagesFiles.forEach(fileName => {
+                            summaryHtml += `<li>${fileName}</li>`;
                         });
                         summaryHtml += `</ul>`;
                     } else {
@@ -1521,10 +1440,17 @@
                         <h3>Shortage Details:</h3>
                         <p><strong>Accurate Count (Cases):</strong> ${missingCountShortageInput.value.trim()}</p>
                     `;
-                     if (attachedShortageFiles.length > 0) {
+                    let shortageFiles = [];
+                    // Collect file names from each input if files are selected
+                    if (shortageFile1Input.files.length > 0) shortageFiles.push(shortageFile1Input.files[0].name);
+                    if (shortageFile2Input.files.length > 0) shortageFiles.push(shortageFile2Input.files[0].name);
+                    if (shortageFile3Input.files.length > 0) shortageFiles.push(shortageFile3Input.files[0].name);
+                    if (shortageFile4Input.files.length > 0) shortageFiles.push(shortageFile4Input.files[0].name);
+
+                    if (shortageFiles.length > 0) {
                         summaryHtml += `<p><strong>Attached Shortage Files:</strong></p><ul>`;
-                        attachedShortageFiles.forEach(file => {
-                            summaryHtml += `<li>${file.name}</li>`;
+                        shortageFiles.forEach(fileName => {
+                            summaryHtml += `<li>${fileName}</li>`;
                         });
                         summaryHtml += `</ul>`;
                     } else {
@@ -1539,11 +1465,11 @@
             // Event listener for "OK to finish/process" in review modal
             if (reviewModalSubmit) {
                 reviewModalSubmit.addEventListener('click', () => {
-                    console.log('Final submission confirmed. Displaying submission options.');
+                    console.log('Final submission confirmed. Submitting form to Netlify Forms service.');
                     hideCustomModal(reviewModal); // Hide review modal
-                    showCustomModal('', submissionOptionsModal); // Show the new submission options modal
-                    // In a real application, this is where you would send the form data and files to a server.
-                    // For example: submitFormDataToServer();
+                    // The form's submit event is now triggered naturally
+                    mainClaimForm.submit(); 
+                    // Netlify will handle the redirection after submission based on form settings or default behavior.
                 });
             }
 
@@ -1567,6 +1493,7 @@
             if (enterAnotherClaimButton) {
                 enterAnotherClaimButton.addEventListener('click', () => {
                     console.log('User chose to enter another claim. Resetting form.');
+                    hideCustomModal(submissionOptionsModal); // Hide the modal first
                     resetForm(); // Reset the entire form
                 });
             }
@@ -1653,8 +1580,10 @@
                 if (event.target === reviewModal) {
                     hideCustomModal(reviewModal); 
                 }
-                if (event.target === submissionOptionsModal) { // Allow closing submission options by clicking outside
-                    hideCustomModal(submissionOptionsModal);
+                if (event.target === submissionOptionsModal) { 
+                    // Clicking outside submission options modal:
+                    // Assume user wants to close and return to the main site.
+                    window.location.href = 'https://www.gerhardscanada.com'; 
                 }
             });
         });
