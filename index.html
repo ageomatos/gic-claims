@@ -1397,10 +1397,10 @@
 
             // --- Disclaimer Section Logic ---
             if (submitButtonDisclaimer) {
+                // This listener now correctly triggers the review modal *before* the form submission.
                 submitButtonDisclaimer.addEventListener('click', (event) => {
-                    // Prevent the default form submission for review
-                    event.preventDefault(); 
-                    console.log('Submit button clicked. Showing review modal.');
+                    event.preventDefault(); // Prevent default button behavior to show review modal first
+                    console.log('Submit button clicked. Showing review modal before final submission.');
                     showReviewModal(); // Call function to show review summary
                 });
             }
@@ -1468,23 +1468,10 @@
             // Event listener for "OK to finish/process" in review modal
             if (reviewModalSubmit) {
                 reviewModalSubmit.addEventListener('click', () => {
-                    console.log('Final submission confirmed. Submitting form to Netlify Forms service.');
-                    generatedClaimCode = generateClaimCode(); // Generate the claim code
-                    hiddenClaimCodeInput.value = generatedClaimCode; // Set hidden input value for Netlify
-
-                    // Set the Netlify email subject
-                    const customerName = customerNameInput.value.trim();
-                    const packingSlip = packingSlipNumberInput.value.trim();
-                    netlifySubjectInput.value = `New Claim from ${customerName} ${packingSlip} | No. ${generatedClaimCode}`;
-                    
-                    claimCodeDisplay.textContent = generatedClaimCode; // Display the code in the final modal
-
-                    hideCustomModal(reviewModal); // Hide review modal
-                    mainClaimForm.submit(); // Submit the form (Netlify handles redirection)
-                    
-                    // Directly show the submission options modal after submission.
-                    // This modal will now stay on screen until a button is clicked.
-                    showCustomModal('', submissionOptionsModal);
+                    console.log('Confirmed review. Triggering form submission.');
+                    // This button click now programmatically triggers the form's 'submit' event.
+                    // This submit event is now handled by the async event listener directly on mainClaimForm.
+                    mainClaimForm.dispatchEvent(new Event('submit', { cancelable: true }));
                 });
             }
 
@@ -1540,69 +1527,6 @@
                     console.log('User chose to close the form. Redirecting to gerhardscanada.com');
                     hideCustomModal(submissionOptionsModal); // Hide the modal FIRST
                     window.location.href = 'https://www.gerhardscanada.com'; // Redirect to the specified URL
-                });
-            }
-
-
-            // --- Back Button Logic ---
-
-            // Back from Damages Terms to Claim Type Selection
-            if (backButtonDamagesTerms) {
-                backButtonDamagesTerms.addEventListener('click', () => {
-                    console.log('Back from Damages Terms to Claim Type selection.');
-                    hideAllSectionsAndModals();
-                    showCustomModal('', claimTypeModal); // Show the claim type modal again
-                    updateProgressBar(2); // Update progress bar to "Claim Type"
-                });
-            }
-
-            // Back from Shortage Terms to Claim Type Selection
-            if (backButtonShortageTerms) {
-                backButtonShortageTerms.addEventListener('click', () => {
-                    console.log('Back from Shortage Terms to Claim Type selection.');
-                    hideAllSectionsAndModals();
-                    showCustomModal('', claimTypeModal); // Show the claim type modal again
-                    updateProgressBar(2); // Update progress bar to "Claim Type"
-                });
-            }
-
-            // Back from Customer to previous Terms section
-            if (backButtonCustomer) {
-                backButtonCustomer.addEventListener('click', () => {
-                    console.log('Back from Customer to Terms section.');
-                    hideAllSectionsAndModals();
-                    if (currentClaimType === 'Damages Claim') {
-                        damagesTermsSection.style.display = 'block';
-                    } else if (currentClaimType === 'Shortage Claim') {
-                        shortageTermsSection.style.display = 'block';
-                    }
-                    updateProgressBar(3); // Update progress bar to "Terms/Conditions"
-                });
-            }
-
-            // Back from Documents to Customer section
-            if (backButtonDocuments) {
-                backButtonDocuments.addEventListener('click', () => {
-                    console.log('Back from Documents to Customer section.');
-                    hideAllSectionsAndModals();
-                    customerSection.style.display = 'block';
-                    updateProgressBar(4); // Update progress bar to "Customer"
-                });
-            }
-
-            // Back from Disclaimer to Documents section
-            if (backButtonDisclaimer) {
-                backButtonDisclaimer.addEventListener('click', () => {
-                    console.log('Back from Disclaimer to Documents section.');
-                    hideAllSectionsAndModals();
-                    documentsSection.style.display = 'block';
-                    updateProgressBar(5); // Update progress bar to "Documents"
-                    // Re-display correct sub-section in documents
-                    if (currentClaimType === 'Damages Claim') {
-                        damagesDocumentsContent.style.display = 'block';
-                    } else if (currentClaimType === 'Shortage Claim') {
-                        shortageDocumentsContent.style.display = 'block';
-                    }
                 });
             }
 
