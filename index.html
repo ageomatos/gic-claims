@@ -603,12 +603,6 @@
             color: #666;
         }
 
-        #reviewSummaryContent ul li {
-            margin-bottom: 5px;
-            padding-left: 10px;
-            position: relative;
-        }
-
         #reviewSummaryContent ul li::before {
             content: '•';
             color: #5b7da8;
@@ -785,7 +779,7 @@
                 <p>Refer to our <a href="https://gerhardscanada.sharepoint.com/:b:/s/PublicSharing/EY4yUu4ede5PoDaHoo2YleAB1C3s-Zxo3OpgSJpN8g_QyQ?e=tKFQPR" class="policy-link" id="policyLink" target="_blank">Damages and Shortages Policy here.</a></p>
                 
                 <div class="logo">
-                    <img src="logo.jpg" alt="Gerhards Importers Canada Logo">
+                    <img src="https://placehold.co/250x100/A7C1DD/FFFFFF?text=Company+Logo" alt="Gerhards Importers Canada Logo">
                 </div>
 
                 <button type="button" class="continue-button" id="continueButton">Continue</button>
@@ -1489,8 +1483,7 @@
                     mainClaimForm.submit(); // Submit the form (Netlify handles redirection)
                     
                     // Directly show the submission options modal after submission.
-                    // In a real Netlify setup, you might redirect to a dedicated success page
-                    // and initialize this modal there. For client-side simulation, this works.
+                    // This modal will now stay on screen until a button is clicked.
                     showCustomModal('', submissionOptionsModal);
                 });
             }
@@ -1515,12 +1508,19 @@
             if (copyClaimCodeButton) {
                 copyClaimCodeButton.addEventListener('click', () => {
                     if (generatedClaimCode) {
-                        navigator.clipboard.writeText(generatedClaimCode).then(() => {
+                        // Using document.execCommand('copy') for broader compatibility in iframes
+                        const tempInput = document.createElement('textarea');
+                        tempInput.value = generatedClaimCode;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        try {
+                            document.execCommand('copy');
                             showCustomModal('Claim Code copied to clipboard!', customModal);
-                        }).catch(err => {
+                        } catch (err) {
                             showCustomModal('Failed to copy Claim Code. Please copy it manually: ' + generatedClaimCode, customModal);
                             console.error('Failed to copy text: ', err);
-                        });
+                        }
+                        document.body.removeChild(tempInput);
                     } else {
                         showCustomModal('No Claim Code to copy.', customModal);
                     }
@@ -1530,7 +1530,7 @@
             if (enterAnotherClaimButton) {
                 enterAnotherClaimButton.addEventListener('click', () => {
                     console.log('User chose to enter another claim. Resetting form.');
-                    hideCustomModal(submissionOptionsModal); // Hide the modal first
+                    hideCustomModal(submissionOptionsModal); // Hide the modal FIRST
                     resetForm(); // Reset the entire form
                 });
             }
@@ -1538,6 +1538,7 @@
             if (closeFormButton) {
                 closeFormButton.addEventListener('click', () => {
                     console.log('User chose to close the form. Redirecting to gerhardscanada.com');
+                    hideCustomModal(submissionOptionsModal); // Hide the modal FIRST
                     window.location.href = 'https://www.gerhardscanada.com'; // Redirect to the specified URL
                 });
             }
@@ -1606,7 +1607,8 @@
             }
 
 
-            // Close modal if user clicks outside of it (for all modals)
+            // IMPORTANT CHANGE: Remove outside click listener for submissionOptionsModal
+            // This ensures the modal stays open until a button is clicked.
             window.addEventListener('click', (event) => {
                 if (event.target === customModal) {
                     hideCustomModal(customModal);
@@ -1617,11 +1619,8 @@
                 if (event.target === reviewModal) {
                     hideCustomModal(reviewModal); 
                 }
-                // Only allow clicking outside to close if it's the submission options modal
-                // and then redirect to the homepage.
-                if (event.target === submissionOptionsModal) { 
-                    window.location.href = 'https://www.gerhardscanada.com'; 
-                }
+                // The submissionOptionsModal is now only dismissed by its internal buttons.
+                // We no longer close and redirect on outside click for this specific modal.
             });
         });
     </script>
