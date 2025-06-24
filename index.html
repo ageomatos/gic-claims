@@ -176,7 +176,7 @@
             margin-top: 30px;
         }
 
-        .continue-button, .next-button, .submit-button, .back-button {
+        .continue-button, .next-button, .submit-button, .back-button, .copy-button {
             background-color: #5b7da8; /* Blue color from the image */
             color: #fff;
             border: none;
@@ -195,7 +195,7 @@
             background-color: #6c757d; /* Grey for back button */
         }
 
-        .continue-button:hover, .next-button:hover, .submit-button:hover {
+        .continue-button:hover, .next-button:hover, .submit-button:hover, .copy-button:hover {
             background-color: #4a6a90; /* Slightly darker blue on hover */
             transform: translateY(-2px); /* Slight lift effect */
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
@@ -207,7 +207,7 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
 
-        .continue-button:active, .next-button:active, .submit-button:active, .back-button:active {
+        .continue-button:active, .next-button:active, .submit-button:active, .back-button:active, .copy-button:active {
             transform: translateY(0); /* Press down effect */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
@@ -700,7 +700,7 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            .continue-button, .next-button, .submit-button, .back-button {
+            .continue-button, .next-button, .submit-button, .back-button, .copy-button {
                 width: 100%;
             }
         }
@@ -718,7 +718,7 @@
             .content p {
                 font-size: 15px;
             }
-            .continue-button, .next-button, .submit-button, .back-button {
+            .continue-button, .next-button, .submit-button, .back-button, .copy-button {
                 padding: 12px 30px;
                 font-size: 16px;
             }
@@ -777,7 +777,8 @@
         <form name="claim_form" method="POST" data-netlify="true" id="mainClaimForm" data-netlify-honeypot="bot-field" enctype="multipart/form-data">
             <input type="hidden" name="form-name" value="claim_form" />
             <input type="hidden" name="bot-field" />
-            <input type="hidden" name="claimCode" id="hiddenClaimCode" value="" />
+            <input type="hidden" name="Claim Code" id="hiddenClaimCode" value="" />
+            <input type="hidden" name="_subject" id="netlifySubject" value="" />
 
             <main id="initialContentSection" class="content form-section" style="display: block;">
                 <p>At Gerhards Importers Canada, we strive to provide the best possible service to our customers, and ensuring the safe delivery of your orders is of utmost importance to us. While we make every effort to pack and ship your items securely, occasionally, damages or missing items can occur during transit.</p>
@@ -837,12 +838,12 @@
                 <h2>Customer Information</h2>
                 <div class="form-group">
                     <label for="customerName">Customer Name:</label>
-                    <input type="text" id="customerName" name="customerName" required>
+                    <input type="text" id="customerName" name="Customer Name" required>
                     <span class="error-message" id="customerNameError"></span>
                 </div>
                 <div class="form-group">
                     <label for="packingSlipNumber">Packing Slip Number (5 digits):</label>
-                    <input type="number" id="packingSlipNumber" name="packingSlipNumber" required pattern="[0-9]{5}" inputmode="numeric" maxlength="5">
+                    <input type="number" id="packingSlipNumber" name="Packing Slip Number" required pattern="[0-9]{5}" inputmode="numeric" maxlength="5">
                     <span class="error-message" id="packingSlipNumberError"></span>
                 </div>
                 <div class="button-group">
@@ -864,24 +865,24 @@
                     </p>
                     <div class="form-group">
                         <label for="missingCountShortage">Accurate count of the missing CASES per product/brand/description:</label>
-                        <textarea id="missingCountShortage" name="missingCountShortage" rows="4" required placeholder="e.g., 5 cases of Product X - Brand A, 2 cases of Product Y - Brand B"></textarea>
+                        <textarea id="missingCountShortage" name="Missing Count (Shortage)" rows="4" required placeholder="e.g., 5 cases of Product X - Brand A, 2 cases of Product Y - Brand B"></textarea>
                         <span class="error-message" id="missingCountShortageError"></span>
                     </div>
                     <div class="file-input-group">
                         <label for="shortageFile1">Attachment 1:</label>
-                        <input type="file" id="shortageFile1" name="shortage_file_1" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <input type="file" id="shortageFile1" name="Shortage Attachment 1" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                     </div>
                     <div class="file-input-group">
                         <label for="shortageFile2">Attachment 2:</label>
-                        <input type="file" id="shortageFile2" name="shortage_file_2" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <input type="file" id="shortageFile2" name="Shortage Attachment 2" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                     </div>
                     <div class="file-input-group">
                         <label for="shortageFile3">Attachment 3:</label>
-                        <input type="file" id="shortageFile3" name="shortage_file_3" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <input type="file" id="shortageFile3" name="Shortage Attachment 3" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                     </div>
                     <div class="file-input-group">
                         <label for="shortageFile4">Attachment 4:</label>
-                        <input type="file" id="shortageFile4" name="shortage_file_4" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <input type="file" id="shortageFile4" name="Shortage Attachment 4" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                     </div>
                     <span class="error-message" id="shortageFileUploadError"></span>
                 </div>
@@ -892,24 +893,24 @@
                     </p>
                     <div class="form-group">
                         <label for="damageCountDamages">Accurate count of the damages per product/brand/description (in units):</label>
-                        <textarea id="damageCountDamages" name="damageCountDamages" rows="4" required placeholder="e.g., 10 units of Product X - Brand A (broken bottles), 3 units of Product Y - Brand B (dented cans)"></textarea>
+                        <textarea id="damageCountDamages" name="Damage Count (Damages)" rows="4" required placeholder="e.g., 10 units of Product X - Brand A (broken bottles), 3 units of Product Y - Brand B (dented cans)"></textarea>
                         <span class="error-message" id="damageCountDamagesError"></span>
                     </div>
                     <div class="file-input-group">
                         <label for="damagesFile1">Attachment 1:</label>
-                        <input type="file" id="damagesFile1" name="damages_file_1" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <input type="file" id="damagesFile1" name="Damages Attachment 1" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                     </div>
                     <div class="file-input-group">
                         <label for="damagesFile2">Attachment 2:</label>
-                        <input type="file" id="damagesFile2" name="damages_file_2" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <input type="file" id="damagesFile2" name="Damages Attachment 2" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                     </div>
                     <div class="file-input-group">
                         <label for="damagesFile3">Attachment 3:</label>
-                        <input type="file" id="damagesFile3" name="damages_file_3" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <input type="file" id="damagesFile3" name="Damages Attachment 3" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                     </div>
                     <div class="file-input-group">
                         <label for="damagesFile4">Attachment 4:</label>
-                        <input type="file" id="damagesFile4" name="damages_file_4" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
+                        <input type="file" id="damagesFile4" name="Damages Attachment 4" accept=".pdf,image/jpeg,image/png,image/gif,video/mp4,video/webm,video/ogg">
                     </div>
                     <span class="error-message" id="damagesFileUploadError"></span>
                 </div>
@@ -980,9 +981,8 @@
                 <h2>Claim Submitted Successfully!</h2>
                 <p>Your Claim Code is:</p>
                 <p id="claimCodeDisplay">GENERATING...</p>
-                <p>Please make a note of this code for your records.</p>
-                <p>What would you like to do next?</p>
                 <div class="button-group">
+                    <button type="button" class="copy-button" id="copyClaimCodeButton">Copy Claim Code</button>
                     <button type="button" class="next-button" id="enterAnotherClaimButton">Enter another claim</button>
                     <button type="button" class="back-button" id="closeFormButton">Close</button>
                 </div>
@@ -1075,6 +1075,8 @@
             const submissionOptionsModal = document.getElementById('submissionOptionsModal');
             const claimCodeDisplay = document.getElementById('claimCodeDisplay');
             const hiddenClaimCodeInput = document.getElementById('hiddenClaimCode');
+            const netlifySubjectInput = document.getElementById('netlifySubject'); // New hidden input for Netlify subject
+            const copyClaimCodeButton = document.getElementById('copyClaimCodeButton'); // New copy button
             const enterAnotherClaimButton = document.getElementById('enterAnotherClaimButton');
             const closeFormButton = document.getElementById('closeFormButton');
 
@@ -1178,6 +1180,7 @@
                 shortageFile3Input.value = ''; 
                 shortageFile4Input.value = ''; 
                 hiddenClaimCodeInput.value = ''; // Clear hidden claim code
+                netlifySubjectInput.value = ''; // Clear Netlify subject
 
                 // Reset error messages
                 customerNameError.textContent = '';
@@ -1473,16 +1476,21 @@
                 reviewModalSubmit.addEventListener('click', () => {
                     console.log('Final submission confirmed. Submitting form to Netlify Forms service.');
                     generatedClaimCode = generateClaimCode(); // Generate the claim code
-                    hiddenClaimCodeInput.value = generatedClaimCode; // Set hidden input value
-                    claimCodeDisplay.textContent = generatedClaimCode; // Display the code in the modal
+                    hiddenClaimCodeInput.value = generatedClaimCode; // Set hidden input value for Netlify
+
+                    // Set the Netlify email subject
+                    const customerName = customerNameInput.value.trim();
+                    const packingSlip = packingSlipNumberInput.value.trim();
+                    netlifySubjectInput.value = `New Claim from ${customerName} ${packingSlip} | No. ${generatedClaimCode}`;
+                    
+                    claimCodeDisplay.textContent = generatedClaimCode; // Display the code in the final modal
 
                     hideCustomModal(reviewModal); // Hide review modal
-                    mainClaimForm.submit(); // Submit the form
-                    // Netlify will handle the redirection after submission.
-                    // The success message with the claim code will be displayed
-                    // if Netlify's default success page is configured, or
-                    // if you set up a custom redirect to a page where this modal is shown.
-                    // For this client-side code, we'll directly show the submission options modal.
+                    mainClaimForm.submit(); // Submit the form (Netlify handles redirection)
+                    
+                    // Directly show the submission options modal after submission.
+                    // In a real Netlify setup, you might redirect to a dedicated success page
+                    // and initialize this modal there. For client-side simulation, this works.
                     showCustomModal('', submissionOptionsModal);
                 });
             }
@@ -1504,6 +1512,21 @@
             }
 
             // --- Post-Submission Options Logic ---
+            if (copyClaimCodeButton) {
+                copyClaimCodeButton.addEventListener('click', () => {
+                    if (generatedClaimCode) {
+                        navigator.clipboard.writeText(generatedClaimCode).then(() => {
+                            showCustomModal('Claim Code copied to clipboard!', customModal);
+                        }).catch(err => {
+                            showCustomModal('Failed to copy Claim Code. Please copy it manually: ' + generatedClaimCode, customModal);
+                            console.error('Failed to copy text: ', err);
+                        });
+                    } else {
+                        showCustomModal('No Claim Code to copy.', customModal);
+                    }
+                });
+            }
+
             if (enterAnotherClaimButton) {
                 enterAnotherClaimButton.addEventListener('click', () => {
                     console.log('User chose to enter another claim. Resetting form.');
@@ -1594,9 +1617,9 @@
                 if (event.target === reviewModal) {
                     hideCustomModal(reviewModal); 
                 }
+                // Only allow clicking outside to close if it's the submission options modal
+                // and then redirect to the homepage.
                 if (event.target === submissionOptionsModal) { 
-                    // Clicking outside submission options modal:`
-                    // Assume user wants to close and return to the main site.
                     window.location.href = 'https://www.gerhardscanada.com'; 
                 }
             });
