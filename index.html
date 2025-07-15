@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -986,6 +986,9 @@ DOCTYPE html>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const MAX_FILE_SIZE_MB = 8; // Max file size in MB
+            const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; // Convert to bytes
+
             const continueButton = document.getElementById('continueButton');
             const policyLink = document.getElementById('policyLink');
             
@@ -1074,8 +1077,9 @@ DOCTYPE html>
             const enterAnotherClaimButton = document.getElementById('enterAnotherClaimButton');
             const closeFormButton = document.getElementById('closeFormButton');
 
-            // Global variable to store current claim type
+            // Global variable to store current claim type and progress step
             let currentClaimType = ''; 
+            let currentStep = 1; // Initialize current step
             // Global variable to store the generated claim code
             let generatedClaimCode = '';
 
@@ -1086,6 +1090,7 @@ DOCTYPE html>
              * @param {number} stepNumber - The 1-based index of the step to set as active.
              */
             function updateProgressBar(stepNumber) {
+                currentStep = stepNumber; // Update global currentStep
                 progressSteps.forEach((step, index) => {
                     if (index + 1 === stepNumber) {
                         step.classList.add('active');
@@ -1154,6 +1159,31 @@ DOCTYPE html>
             }
 
             /**
+             * Validates the total size of selected files against a maximum limit.
+             * @param {Array<HTMLInputElement>} fileInputs - An array of file input elements to check.
+             * @param {HTMLElement} errorElement - The element to display error messages.
+             * @returns {boolean} True if total file size is within limits, false otherwise.
+             */
+            function validateFileSizes(fileInputs, errorElement) {
+                let totalSize = 0;
+                let exceedsSize = false;
+
+                fileInputs.forEach(input => {
+                    if (input.files.length > 0) {
+                        totalSize += input.files[0].size;
+                    }
+                });
+
+                if (totalSize > MAX_FILE_SIZE_BYTES) {
+                    errorElement.textContent = `Total file size exceeds ${MAX_FILE_SIZE_MB} MB. Current total: ${(totalSize / (1024 * 1024)).toFixed(2)} MB`;
+                    exceedsSize = true;
+                } else {
+                    errorElement.textContent = ''; // Clear error if valid
+                }
+                return !exceedsSize;
+            }
+
+            /**
              * Resets the entire form to its initial state.
              */
             function resetForm() {
@@ -1201,6 +1231,7 @@ DOCTYPE html>
                 continueButton.addEventListener('click', () => {
                     console.log('Continue button clicked, showing claim type selection.');
                     showCustomModal('', claimTypeModal); // Show the new claim type selection modal
+                    updateProgressBar(2); // Update progress bar to "Claim Type"
                 });
             }
 
@@ -1276,6 +1307,15 @@ DOCTYPE html>
                 });
             }
 
+            // Event listener for the 'Back' button in Damages Terms & Conditions
+            if (backButtonDamagesTerms) {
+                backButtonDamagesTerms.addEventListener('click', () => {
+                    hideAllSectionsAndModals();
+                    showCustomModal('', claimTypeModal); // Go back to claim type selection
+                    updateProgressBar(2); // Update progress bar to "Claim Type"
+                });
+            }
+
             // Event listener for the 'Next' button in Shortage Terms & Conditions
             if (nextButtonShortageTerms) {
                 nextButtonShortageTerms.addEventListener('click', () => {
@@ -1287,6 +1327,15 @@ DOCTYPE html>
                     } else {
                         showCustomModal('Please accept the terms and conditions to proceed.', customModal);
                     }
+                });
+            }
+
+            // Event listener for the 'Back' button in Shortage Terms & Conditions
+            if (backButtonShortageTerms) {
+                backButtonShortageTerms.addEventListener('click', () => {
+                    hideAllSectionsAndModals();
+                    showCustomModal('', claimTypeModal); // Go back to claim type selection
+                    updateProgressBar(2); // Update progress bar to "Claim Type"
                 });
             }
 
@@ -1324,16 +1373,29 @@ DOCTYPE html>
                         // Show specific document content based on selected claim type
                         if (currentClaimType === 'Damages Claim') {
                             damagesDocumentsContent.style.display = 'block';
-                            // No initial rendering needed for individual file inputs, Netlify handles them directly.
                         } else if (currentClaimType === 'Shortage Claim') {
                             shortageDocumentsContent.style.display = 'block';
-                            // No initial rendering needed for individual file inputs, Netlify handles them directly.
                         }
                     } else {
                         showCustomModal('Please correct the errors in the customer information form.', customModal);
                     }
                 });
             }
+
+            // Event listener for the 'Back' button in Customer section
+            if (backButtonCustomer) {
+                backButtonCustomer.addEventListener('click', () => {
+                    hideAllSectionsAndModals();
+                    // Go back to the correct terms section based on currentClaimType
+                    if (currentClaimType === 'Damages Claim') {
+                        damagesTermsSection.style.display = 'block';
+                    } else if (currentClaimType === 'Shortage Claim') {
+                        shortageTermsSection.style.display = 'block';
+                    }
+                    updateProgressBar(3); // Update progress bar to "Terms/Conditions"
+                });
+            }
+
 
             // Add an input event listener to restrict packing slip number to 5 digits
             if (packingSlipNumberInput) {
@@ -1352,9 +1414,6 @@ DOCTYPE html>
             }
 
             // --- Documents Section Logic ---
-            // Removed handleFileSelection, renderAttachedFiles, removeFile as they managed dynamic lists.
-            // Individual file inputs now rely on browser default behavior.
-
             // Event listener for 'Next' button in Documents section
             if (nextButtonDocuments) {
                 nextButtonDocuments.addEventListener('click', () => {
@@ -1362,10 +1421,20 @@ DOCTYPE html>
                     // Reset all document-related errors
                     damageCountDamagesError.textContent = '';
                     missingCountShortageError.textContent = '';
-                    // No specific file input error spans (e.g., shortageFile1Error) in this version
-                    // as required validation for attachments is removed.
-                    shortageFileUploadError.textContent = ''; // Still clear general upload error if it was set by invalid file type
-                    damagesFileUploadError.textContent = ''; // Still clear general upload error if it was set by invalid file type
+                    damagesFileUploadError.textContent = ''; 
+                    shortageFileUploadError.textContent = ''; 
+
+                    const allFileInputs = [
+                        damagesFile1Input, damagesFile2Input, damagesFile3Input, damagesFile4Input,
+                        shortageFile1Input, shortageFile2Input, shortageFile3Input, shortageFile4Input
+                    ];
+
+                    // Validate total file size
+                    if (!validateFileSizes(allFileInputs, damagesFileUploadError) || !validateFileSizes(allFileInputs, shortageFileUploadError)) {
+                        isValid = false;
+                        showCustomModal(`Total file size exceeds ${MAX_FILE_SIZE_MB} MB. Please reduce the size of your attachments.`, customModal);
+                        return; // Stop processing if file size is too large
+                    }
 
 
                     if (currentClaimType === 'Damages Claim') {
@@ -1374,14 +1443,12 @@ DOCTYPE html>
                             damageCountDamagesError.textContent = 'Accurate count of damages is required.';
                             isValid = false;
                         }
-                        // Attachments are NOT required. No file count validation.
                     } else if (currentClaimType === 'Shortage Claim') {
                         // Validate 'Accurate count of missing CASES' textbox for Shortage Claim
                         if (missingCountShortageInput.value.trim() === '') {
                             missingCountShortageError.textContent = 'Accurate count of missing CASES is required.';
                             isValid = false;
                         }
-                        // Attachments are NOT required. No file count validation.
                     }
 
                     if (isValid) {
@@ -1390,10 +1457,20 @@ DOCTYPE html>
                         disclaimerSection.style.display = 'block'; // Show disclaimer section
                         updateProgressBar(6); // Update progress bar to "Disclaimer"
                     } else {
-                        showCustomModal('Please fill in all required text fields in the Documents section.', customModal);
+                        showCustomModal('Please fill in all required text fields in the Documents section and check file sizes.', customModal);
                     }
                 });
             }
+
+            // Event listener for the 'Back' button in Documents section
+            if (backButtonDocuments) {
+                backButtonDocuments.addEventListener('click', () => {
+                    hideAllSectionsAndModals();
+                    customerSection.style.display = 'block'; // Go back to customer section
+                    updateProgressBar(4); // Update progress bar to "Customer"
+                });
+            }
+
 
             // --- Disclaimer Section Logic ---
             if (submitButtonDisclaimer) {
@@ -1404,6 +1481,22 @@ DOCTYPE html>
                     showReviewModal(); // Call function to show review summary
                 });
             }
+
+            // Event listener for the 'Back' button in Disclaimer section
+            if (backButtonDisclaimer) {
+                backButtonDisclaimer.addEventListener('click', () => {
+                    hideAllSectionsAndModals();
+                    documentsSection.style.display = 'block'; // Go back to documents section
+                    updateProgressBar(5); // Update progress bar to "Documents"
+                     // Re-display correct sub-section in documents
+                    if (currentClaimType === 'Damages Claim') {
+                        damagesDocumentsContent.style.display = 'block';
+                    } else if (currentClaimType === 'Shortage Claim') {
+                        shortageDocumentsContent.style.display = 'block';
+                    }
+                });
+            }
+
 
             /**
              * Gathers all entered data and displays it in the review modal.
@@ -1469,9 +1562,15 @@ DOCTYPE html>
             if (reviewModalSubmit) {
                 reviewModalSubmit.addEventListener('click', () => {
                     console.log('Confirmed review. Triggering form submission.');
-                    // This button click now programmatically triggers the form's 'submit' event.
-                    // This submit event is now handled by the async event listener directly on mainClaimForm.
-                    mainClaimForm.dispatchEvent(new Event('submit', { cancelable: true }));
+                    hideCustomModal(reviewModal); // Hide the review modal
+
+                    // Generate claim code and update hidden fields just before submission
+                    generatedClaimCode = generateClaimCode();
+                    hiddenClaimCodeInput.value = generatedClaimCode;
+                    netlifySubjectInput.value = `New GIC Claim: ${currentClaimType} - ${generatedClaimCode}`;
+
+                    // Programmatically submit the form
+                    mainClaimForm.submit(); // This will trigger Netlify's form handling
                 });
             }
 
@@ -1491,23 +1590,103 @@ DOCTYPE html>
                 });
             }
 
+            // --- Netlify Form Submission Success Handling ---
+            // Netlify intercepts form submissions with `data-netlify="true"`.
+            // After successful submission, it typically redirects or handles via AJAX.
+            // For a smooth UX, you'd usually have a Netlify redirect rule (e.g., /success)
+            // or an AJAX submission. Since this is a simple HTML/JS, we'll
+            // assume Netlify handles the submission and then we can display the modal.
+
+            // A more robust way to handle Netlify form success without redirection
+            // is to use AJAX submission. However, for a data-netlify="true" form,
+            // Netlify often handles the redirect automatically.
+            // If you want to stay on the same page and show the modal *after* Netlify has processed,
+            // you'd need to convert this to an AJAX form submission yourself.
+            // For now, we'll display the submission success modal right after `mainClaimForm.submit()`
+            // and assume the user will then be presented with the modal as the page updates.
+            // In a real scenario with Netlify, you might put this logic in a `data-netlify-honeypot`'s success handler
+            // or rely on Netlify's redirect.
+
+            // This is a placeholder for what would happen *after* Netlify successfully processes the form.
+            // In a real Netlify setup, you would typically redirect to a success page,
+            // or use client-side AJAX form submission to prevent a full page reload and
+            // then display this modal.
+            // Since this is a static HTML, we will show the submission modal immediately after the submit() call.
+            mainClaimForm.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevent default browser submission, let Netlify handle via JS
+
+                const formData = new FormData(mainClaimForm);
+
+                // This part mimics what Netlify's JS might do behind the scenes for `data-netlify="true"`
+                // For a true no-redirect experience, you'd perform an `await fetch(mainClaimForm.action, { method: 'POST', body: formData })`
+                // and then based on the response, show the modal.
+                // However, directly calling form.submit() after preparing data *usually* defers to Netlify's built-in handling.
+
+                // Simulate Netlify's processing for client-side display logic
+                // In a production environment with Netlify, this part of the code
+                // often runs *after* Netlify's servers have received and processed the data.
+                // For this self-contained HTML, we are showing the modal immediately upon "submission".
+                
+                // Show a loading indicator if desired before the actual fetch.
+                // showCustomModal('Submitting your claim...', customModal);
+
+                try {
+                    // This is a client-side submission for Netlify.
+                    // The 'mainClaimForm.submit()' call above is the more typical way
+                    // when relying on data-netlify="true".
+                    // If you want full control over the UX and no page reload,
+                    // you'd uncomment the following fetch and manage the response.
+
+                    const response = await fetch(mainClaimForm.action, {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (response.ok) {
+                        console.log('Form submitted successfully via Fetch API.');
+                        hideAllSectionsAndModals();
+                        claimCodeDisplay.textContent = generatedClaimCode; // Display the generated code
+                        showCustomModal('', submissionOptionsModal); // Show final options
+                    } else {
+                        console.error('Form submission failed:', response.statusText);
+                        showCustomModal('Oops! There was an issue submitting your claim. Please try again or contact support if the problem persists.', customModal);
+                    }
+                } catch (error) {
+                    console.error('Network error during form submission:', error);
+                    showCustomModal('A network error occurred. Please check your internet connection and try again.', customModal);
+                }
+            });
+
+
             // --- Post-Submission Options Logic ---
             if (copyClaimCodeButton) {
                 copyClaimCodeButton.addEventListener('click', () => {
                     if (generatedClaimCode) {
-                        // Using document.execCommand('copy') for broader compatibility in iframes
-                        const tempInput = document.createElement('textarea');
-                        tempInput.value = generatedClaimCode;
-                        document.body.appendChild(tempInput);
-                        tempInput.select();
-                        try {
-                            document.execCommand('copy');
-                            showCustomModal('Claim Code copied to clipboard!', customModal);
-                        } catch (err) {
-                            showCustomModal('Failed to copy Claim Code. Please copy it manually: ' + generatedClaimCode, customModal);
-                            console.error('Failed to copy text: ', err);
+                        // Using Clipboard API for modern browsers, fallback for older ones
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(generatedClaimCode)
+                                .then(() => {
+                                    showCustomModal('Claim Code copied to clipboard!', customModal);
+                                })
+                                .catch(err => {
+                                    console.error('Failed to copy text using Clipboard API: ', err);
+                                    showCustomModal('Failed to copy Claim Code. Please copy it manually: ' + generatedClaimCode, customModal);
+                                });
+                        } else {
+                            // Fallback for older browsers (document.execCommand is deprecated but still works)
+                            const tempInput = document.createElement('textarea');
+                            tempInput.value = generatedClaimCode;
+                            document.body.appendChild(tempInput);
+                            tempInput.select();
+                            try {
+                                document.execCommand('copy');
+                                showCustomModal('Claim Code copied to clipboard!', customModal);
+                            } catch (err) {
+                                showCustomModal('Failed to copy Claim Code. Please copy it manually: ' + generatedClaimCode, customModal);
+                                console.error('Failed to copy text: ', err);
+                            }
+                            document.body.removeChild(tempInput);
                         }
-                        document.body.removeChild(tempInput);
                     } else {
                         showCustomModal('No Claim Code to copy.', customModal);
                     }
