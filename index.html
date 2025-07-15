@@ -7,6 +7,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
+        /* Existing CSS... */
+        /* Add this to hide the special Netlify detection form */
+        #netlify-detection-form {
+            position: absolute;
+            top: -9999px; /* Off-screen */
+            left: -9999px; /* Off-screen */
+            opacity: 0; /* Fully transparent */
+            pointer-events: none; /* Not interactable */
+            z-index: -1; /* Behind everything */
+            visibility: hidden; /* Ensure it's not rendered */
+        }
+
         /* General body styles */
         body {
             font-family: 'Inter', sans-serif; /* Using Inter font as per guidelines */
@@ -729,6 +741,26 @@
     </style>
 </head>
 <body>
+    <form name="claim_form" netlify hidden id="netlify-detection-form">
+        <input type="text" name="customer-name">
+        <input type="number" name="packing-slip-number">
+        <textarea name="missing-count-shortage"></textarea>
+        <textarea name="damage-count-damages"></textarea>
+        <input type="text" name="claimType"> <input type="checkbox" name="acceptDamagesTerms">
+        <input type="checkbox" name="acceptShortageTerms">
+        <input type="file" name="shortage-attachment-1">
+        <input type="file" name="shortage-attachment-2">
+        <input type="file" name="shortage-attachment-3">
+        <input type="file" name="shortage-attachment-4">
+        <input type="file" name="damages-attachment-1">
+        <input type="file" name="damages-attachment-2">
+        <input type="file" name="damages-attachment-3">
+        <input type="file" name="damages-attachment-4">
+        <input type="hidden" name="claim-code">
+        <input type="hidden" name="_subject">
+        <input type="text" name="bot-field">
+    </form>
+
     <div class="container">
         <header>
             <h1>Damages & Shortages Claim Form</h1>
@@ -767,7 +799,7 @@
             <input type="hidden" name="bot-field" />
             <input type="hidden" name="claim-code" id="hiddenClaimCode" value="" />
             <input type="hidden" name="_subject" id="netlifySubject" value="" />
-
+            
             <main id="initialContentSection" class="content form-section" style="display: block;">
                 <p>At Gerhards Importers Canada, we strive to provide the best possible service to our customers, and ensuring the safe delivery of your orders is of utmost importance to us. While we make every effort to pack and ship your items securely, occasionally, damages or missing items can occur during transit.</p>
                 <p>Refer to our <a href="https://gerhardscanada.sharepoint.com/:b:/s/PublicSharing/EY4yUu4ede5PoDaHoo2YleABeUspwcTuEu1SMvLsnhAljw?e=kCixKj" class="policy-link" id="policyLink" target="_blank">Damages and Shortages Policy here.</a></p>
@@ -978,11 +1010,13 @@
         </div>
     </div>
 
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const MAX_FILE_SIZE_MB = 8; // Max file size in MB
             const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; // Convert to bytes
 
+            // --- IMPORTANT: Ensure these match the IDs in your HTML ---
             const continueButton = document.getElementById('continueButton');
             const policyLink = document.getElementById('policyLink');
             
@@ -1276,7 +1310,7 @@
                             console.log('Damages Claim selected. Showing Terms & Conditions.');
                             damagesTermsSection.style.display = 'block'; // Show damages terms section
                             updateProgressBar(3); // Update progress bar to "Terms/Conditions"
-                        } else if (selectedClaimType === 'Shortage Claim') {
+                        } else { // It must be 'Shortage Claim'
                             console.log('Shortage Claim selected. Showing Terms & Conditions.');
                             shortageTermsSection.style.display = 'block'; // Show shortage terms section
                             updateProgressBar(3); // Update progress bar to "Terms/Conditions"
@@ -1424,11 +1458,21 @@
                     ];
 
                     // Validate total file size
-                    if (!validateFileSizes(allFileInputs, damagesFileUploadError) || !validateFileSizes(allFileInputs, shortageFileUploadError)) {
-                        isValid = false;
-                        showCustomModal(`Total file size exceeds ${MAX_FILE_SIZE_MB} MB. Please reduce the size of your attachments.`, customModal);
-                        return; // Stop processing if file size is too large
+                    // Note: We are validating all 8 potential file inputs together for total size.
+                    // This is for client-side feedback. Netlify handles server-side limits.
+                    if (!validateFileSizes(allFileInputs, damagesFileUploadError) && currentClaimType === 'Damages Claim') {
+                         isValid = false;
+                         showCustomModal(`Total file size exceeds ${MAX_FILE_SIZE_MB} MB for Damages Claim. Please reduce the size of your attachments.`, customModal);
+                         return;
                     }
+                    if (!validateFileSizes(allFileInputs, shortageFileUploadError) && currentClaimType === 'Shortage Claim') {
+                         isValid = false;
+                         showCustomModal(`Total file size exceeds ${MAX_FILE_SIZE_MB} MB for Shortage Claim. Please reduce the size of your attachments.`, customModal);
+                         return;
+                    }
+                    // Clear both error messages if validation passes, as they share the same space
+                    damagesFileUploadError.textContent = '';
+                    shortageFileUploadError.textContent = '';
 
 
                     if (currentClaimType === 'Damages Claim') {
@@ -1451,7 +1495,14 @@
                         disclaimerSection.style.display = 'block'; // Show disclaimer section
                         updateProgressBar(6); // Update progress bar to "Disclaimer"
                     } else {
-                        showCustomModal('Please fill in all required text fields in the Documents section and check file sizes.', customModal);
+                        // Ensure the correct error message is shown if validation fails
+                        if (damageCountDamagesError.textContent || missingCountShortageError.textContent) {
+                             showCustomModal('Please fill in all required text fields in the Documents section.', customModal);
+                        } else if (damagesFileUploadError.textContent || shortageFileUploadError.textContent) {
+                             // Modal already shown by validateFileSizes if file size was the issue
+                        } else {
+                             showCustomModal('Please correct the errors in the Documents section.', customModal);
+                        }
                     }
                 });
             }
@@ -1556,7 +1607,7 @@
             if (reviewModalSubmit) {
                 reviewModalSubmit.addEventListener('click', () => {
                     console.log('Confirmed review. Triggering form submission.');
-                    // Don't hide the review modal here if we're relying on page reload for success feedback
+                    // Don't hide the review modal here as we are about to redirect
 
                     // Generate claim code and update hidden fields just before submission
                     generatedClaimCode = generateClaimCode();
@@ -1585,14 +1636,11 @@
                 });
             }
 
-            // IMPORTANT CHANGE: REMOVE THE mainClaimForm.addEventListener('submit', async (event) => { ... }); BLOCK
-            // This entire block is now removed to let Netlify handle the submission directly.
-            // If you want to use client-side modals *after* submission without a reload,
-            // that requires a different, more advanced Netlify AJAX setup.
-            // For now, we prioritize getting the data to Netlify reliably.
+            // The main form's submit listener that used Fetch API is now removed.
+            // Relying solely on the native form.submit() which Netlify intercepts.
 
 
-            // --- Post-Submission Options Logic (These will be for the success.html page, or re-wired later) ---
+            // --- Post-Submission Options Logic ---
             // These buttons are designed to function *after* a successful submission,
             // typically on a dedicated success page or via a more advanced AJAX flow.
             // For the simplified approach, their direct functionality might change or
@@ -1600,7 +1648,6 @@
             if (copyClaimCodeButton) {
                 copyClaimCodeButton.addEventListener('click', () => {
                     if (generatedClaimCode) {
-                        // Using Clipboard API for modern browsers, fallback for older ones
                         if (navigator.clipboard && navigator.clipboard.writeText) {
                             navigator.clipboard.writeText(generatedClaimCode)
                                 .then(() => {
@@ -1611,7 +1658,6 @@
                                     showCustomModal('Failed to copy Claim Code. Please copy it manually: ' + generatedClaimCode, customModal);
                                 });
                         } else {
-                            // Fallback for older browsers (document.execCommand is deprecated but still works)
                             const tempInput = document.createElement('textarea');
                             tempInput.value = generatedClaimCode;
                             document.body.appendChild(tempInput);
@@ -1647,9 +1693,6 @@
                 });
             }
 
-
-            // IMPORTANT CHANGE: Remove outside click listener for submissionOptionsModal
-            // This ensures the modal stays open until a button is clicked.
             window.addEventListener('click', (event) => {
                 if (event.target === customModal) {
                     hideCustomModal(customModal);
@@ -1660,8 +1703,6 @@
                 if (event.target === reviewModal) {
                     hideCustomModal(reviewModal); 
                 }
-                // The submissionOptionsModal is now only dismissed by its internal buttons.
-                // We no longer close and redirect on outside click for this specific modal.
             });
         });
     </script>
