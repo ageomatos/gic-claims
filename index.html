@@ -1046,7 +1046,7 @@
             const shortageFile2Input = document.getElementById('shortageFile2');
             const shortageFile3Input = document.getElementById('shortageFile3');
             const shortageFile4Input = document.getElementById('shortageFile4');
-            const shortageFileUploadError = document->textContent = ''; // General error for shortage files
+            const shortageFileUploadError = document.getElementById('shortageFileUploadError'); // General error for shortage files
 
             const nextButtonDocuments = document.getElementById('nextButtonDocuments');
             const backButtonDocuments = document.getElementById('backButtonDocuments');
@@ -1205,7 +1205,7 @@
                 packingSlipNumberError.textContent = '';
                 damageCountDamagesError.textContent = '';
                 missingCountShortageError.textContent = '';
-                damagesFileUploadError.textContent = '';
+                damagesFileUploadError.textContent = ''; // Fixed: ensures this specific error span is cleared
                 shortageFileUploadError.textContent = '';
 
                 // Reset global claim type tracker
